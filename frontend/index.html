@@ -281,6 +281,73 @@
         </div>
       </div>
     </div>
+    <!-- ═══════════════════════════════════════════ -->
+    <!--          TELA ESQUECI SENHA                 -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="page-forgot" class="page">
+      <div class="auth-bg">
+        <div class="auth-card">
+          <!-- Botão voltar -->
+          <button class="btn-back" onclick="showPage('page-login')">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M10 12L6 8l4-4"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+            Back to sign in
+          </button>
+
+          <!-- Título e descrição -->
+          <h1 class="auth-title" style="font-size: 1.6rem; margin-top: 0.5rem">
+            Reset password
+          </h1>
+          <p class="auth-subtitle">
+            Enter your email and we'll send you a reset link.
+          </p>
+
+          <!-- Campo Email -->
+          <div class="field-group">
+            <label>Email</label>
+            <div class="input-wrapper">
+              <svg
+                class="input-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+              >
+                <path
+                  d="M2 4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4z"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                />
+                <path
+                  d="M2 4l6 5 6-5"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                />
+              </svg>
+              <input
+                type="email"
+                id="forgot-email"
+                placeholder="you@example.com"
+              />
+            </div>
+          </div>
+
+          <!-- Botão enviar -->
+          <button
+            class="btn-primary"
+            onclick="alert('Link enviado! (simulado)')"
+          >
+            Send reset link
+          </button>
+        </div>
+      </div>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>
