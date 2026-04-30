@@ -734,6 +734,68 @@
               Calcular Rota Otimizada
             </button>
           </section>
+          <!-- HISTÓRICO -->
+          <section id="app-historico" class="app-section">
+            <div class="page-header">
+              <div>
+                <h2 class="page-title">Histórico de Rotas</h2>
+                <p class="page-date">Todas as suas rotas criadas</p>
+              </div>
+            </div>
+
+            <!-- Filtros e busca -->
+            <div class="historico-filters">
+              <div class="search-box">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle
+                    cx="7"
+                    cy="7"
+                    r="4.5"
+                    stroke="currentColor"
+                    stroke-width="1.3"
+                  />
+                  <path
+                    d="M10.5 10.5l3 3"
+                    stroke="currentColor"
+                    stroke-width="1.3"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <input
+                  type="text"
+                  id="busca-rota"
+                  placeholder="Buscar rota..."
+                  oninput="filtrarHistorico()"
+                />
+              </div>
+              <div class="filter-btns">
+                <button
+                  class="filter-btn active"
+                  onclick="setFiltro('todas', this)"
+                >
+                  Todas
+                </button>
+                <button
+                  class="filter-btn"
+                  onclick="setFiltro('pendente', this)"
+                >
+                  Pendentes
+                </button>
+                <button class="filter-btn" onclick="setFiltro('em_rota', this)">
+                  Em Andamento
+                </button>
+                <button
+                  class="filter-btn"
+                  onclick="setFiltro('concluida', this)"
+                >
+                  Concluídas
+                </button>
+              </div>
+            </div>
+
+            <!-- Lista de rotas -->
+            <div id="lista-historico"></div>
+          </section>
         </main>
       </div>
     </div>
