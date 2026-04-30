@@ -32,35 +32,51 @@ def get_delivery(id):
 # Rota para criar uma nova entrega
 @app.route("/deliveries", methods=["POST"])
 def create_delivery():
-    data = request.get_json()
+    try:
+        data = request.get_json()
 
-    id_origin_address = insert_address(
-        data["origin_street"],
-        data["origin_number"],
-        data["origin_city"],
-        data["origin_lat"],
-        data["origin_lng"]
-    )
+        if not data:
+            return jsonify({"erro": "Corpo da requisição inválido"}), 400
+        
+        required_fields = [
+            "origin_street", "origin_number", "origin_city", "origin_lat", "origin_lng",
+            "destination_street", "destination_number", "destination_city", "destination_lat", "destination_lng",
+            "date", "user_id", "recipient_id"
+        ]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"erro": f"Campo obrigatório ausente: {field}"}), 400
 
-    id_destination_address = insert_address(
-        data["destination_street"],
-        data["destination_number"],
-        data["destination_city"],
-        data["destination_lat"],
-        data["destination_lng"]
-    )
+        id_origin_address = insert_address(
+            data["origin_street"],
+            data["origin_number"],
+            data["origin_city"],
+            data["origin_lat"],
+            data["origin_lng"]
+        )
 
-    id_delivery = insert_delivery(
-        status="pendente",
-        data=data["date"],
-        id_usuario=data["user_id"],
-        id_destinatario=data["recipient_id"],
-        id_endereco_origem=id_origin_address,
-        id_endereco_destino=id_destination_address
-    )
+        id_destination_address = insert_address(
+            data["destination_street"],
+            data["destination_number"],
+            data["destination_city"],
+            data["destination_lat"],
+            data["destination_lng"]
+        )
 
-    return jsonify({"delivery_id": id_delivery}), 201
+        id_delivery = insert_delivery(
+            status="pendente",
+            data=data["date"],
+            id_usuario=data["user_id"],
+            id_destinatario=data["recipient_id"],
+            id_endereco_origem=id_origin_address,
+            id_endereco_destino=id_destination_address
+        )
 
+        return jsonify({"delivery_id": id_delivery}), 201
+    
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao criar entrega: {str(e)}"}), 500
+    
 # Rota para calcular a rota mais curta entre origem e destino
 @app.route("/calculate-route", methods=["POST"])
 def calculate_route_api():
