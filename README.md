@@ -65,7 +65,7 @@ O **Algoritmo de Dijkstra** é executado sobre esse grafo para encontrar o camin
 │   ├── config.py         # Configurações do banco de dados (não versionado)
 │   └── database.py       # Funções de acesso ao banco de dados
 ├── docs/
-│   ├── article.md        # Artigo científico do projeto
+│   └── article.md        # Artigo científico do projeto
 ├── frontend/
 │   ├── index.html        # Interface web principal
 │   ├── script.js         # Lógica de interação do frontend
