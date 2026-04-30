@@ -12,16 +12,22 @@ CORS(app)
 # Rota para obter todas as entregas
 @app.route("/deliveries", methods=["GET"])
 def get_deliveries():
-    deliveries = get_all_deliveries()
-    return jsonify(deliveries)
+    try:
+        deliveries = get_all_deliveries()
+        return jsonify(deliveries)
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao buscar entregas: {str(e)}"}), 500
 
 # Rota para obter uma entrega específica por ID
 @app.route("/deliveries/<int:id>", methods=["GET"])
 def get_delivery(id):
-    delivery = get_delivery_by_id(id)
-    if delivery is None:
-        return jsonify({"erro": "Entrega não encontrada"}), 404
-    return jsonify(delivery)
+    try:
+        delivery = get_delivery_by_id(id)
+        if delivery is None:
+            return jsonify({"erro": "Entrega não encontrada"}), 404
+        return jsonify(delivery)
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao buscar entrega: {str(e)}"}), 500
 
 # Rota para criar uma nova entrega
 @app.route("/deliveries", methods=["POST"])
