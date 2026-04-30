@@ -796,6 +796,158 @@
             <!-- Lista de rotas -->
             <div id="lista-historico"></div>
           </section>
+          <!-- MAPA / ROTA -->
+          <section id="app-mapa" class="app-section">
+            <div class="page-header">
+              <div style="display: flex; align-items: center; gap: 12px">
+                <button class="btn-voltar" onclick="showApp('historico')">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path
+                      d="M11 14L7 9l4-5"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                </button>
+                <div>
+                  <h2 class="page-title" id="mapa-titulo">Rota</h2>
+                  <p class="page-date" id="mapa-subtitulo"></p>
+                </div>
+              </div>
+              <button class="btn-nova-rota" onclick="salvarRota()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M3 2h8l3 3v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                  />
+                  <path
+                    d="M5 2v4h6V2M5 12h6"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                Salvar
+              </button>
+            </div>
+
+            <div class="mapa-layout">
+              <!-- Mapa Leaflet -->
+              <div id="map" class="mapa-container"></div>
+
+              <!-- Sidebar do mapa -->
+              <div class="mapa-sidebar">
+                <h3 class="resumo-title">Resumo da Rota</h3>
+
+                <!-- Cards de resumo -->
+                <div class="resumo-grid">
+                  <div class="resumo-card blue">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path
+                        d="M3 5C3 5 6 10 9 10C12 10 15 5 15 5"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M3 13C3 13 6 8 9 8C12 8 15 13 15 13"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                    <div class="resumo-val" id="resumo-km">—</div>
+                    <div class="resumo-label">Distância</div>
+                  </div>
+                  <div class="resumo-card amber">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <circle
+                        cx="9"
+                        cy="9"
+                        r="6"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                      />
+                      <path
+                        d="M9 5v4l3 2"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                    <div class="resumo-val" id="resumo-tempo">—</div>
+                    <div class="resumo-label">Tempo Est.</div>
+                  </div>
+                  <div class="resumo-card purple">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <circle
+                        cx="9"
+                        cy="8"
+                        r="3"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                      />
+                      <path
+                        d="M9 11v5M3 15c0-2 2.7-3.5 6-3.5s6 1.5 6 3.5"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                    <div class="resumo-val" id="resumo-paradas">—</div>
+                    <div class="resumo-label">Paradas</div>
+                  </div>
+                  <div class="resumo-card green">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path
+                        d="M3 9l4 4 8-8"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <div class="resumo-val" id="resumo-entregues">—</div>
+                    <div class="resumo-label">Entregues</div>
+                  </div>
+                </div>
+
+                <!-- Barra de progresso -->
+                <div class="progresso-section">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    <span class="resumo-title" style="font-size: 0.95rem"
+                      >Progresso</span
+                    >
+                    <span class="progresso-pct" id="progresso-pct">0%</span>
+                  </div>
+                  <div class="progresso-bar">
+                    <div
+                      class="progresso-fill"
+                      id="progresso-fill"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                </div>
+
+                <!-- Ordem das entregas -->
+                <div class="ordem-section">
+                  <h3 class="resumo-title" style="margin-bottom: 12px">
+                    Ordem das Entregas
+                  </h3>
+                  <div id="ordem-lista"></div>
+                </div>
+              </div>
+            </div>
+          </section>
         </main>
       </div>
     </div>
