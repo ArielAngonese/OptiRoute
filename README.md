@@ -37,7 +37,7 @@ O sistema integra conceitos de **banco de dados**, **engenharia de software** e 
 | Frontend | HTML5, CSS3, JavaScript |
 | Backend | Python 3, Flask |
 | Banco de Dados | MySQL |
-| Algoritmo de Rotas | Dijkstra (via NetworkX) |
+| Algoritmo de Rotas | Dijkstra (implementação própria) |
 | Dados Geográficos | OpenStreetMap (via OSMnx) |
 
 ---
@@ -92,11 +92,11 @@ O **Algoritmo de Dijkstra** é executado sobre esse grafo para encontrar o camin
 
 **1. Clone o repositório**
 ```bash
-git clone https://github.com/ArielAngonese/Sistema-de-Monitoramento-de-Rede-.git
-cd Sistema-de-Monitoramento-de-Rede-.git
+git clone https://github.com/ArielAngonese/Sistema-de-Otimizacao-de-Rotas-para-Entregas-Urbanas.git
+cd Sistema-de-Otimizacao-de-Rotas-para-Entregas-Urbanas
 ```
 
-**2. Intale os pré-requisitos**
+**2. Instale os pré-requisitos**
 ```bash
 pip install -r requirements.txt
 ```
@@ -106,10 +106,11 @@ pip install -r requirements.txt
 Edite o arquivo `config.py` com suas credenciais MySQL:
 ```python
 DB_CONFIG = {
-    "host": "localhost",
-    "user": "seu_usuario",
+    "host": "seu_host_railway",
+    "port": 00000,
+    "user": "root",
     "password": "sua_senha",
-    "database": "entregas"
+    "database": "railway"
 }
 ```
 
