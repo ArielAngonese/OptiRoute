@@ -4,6 +4,84 @@ URL base: `http://localhost:5000`
 
 ---
 
+## 👤 Usuários
+
+### Cadastrar usuário
+**POST** `/signup`
+
+**Corpo da requisição (JSON):**
+```json
+{
+    "name": "Ariel",
+    "email": "ariel.angonese12345@gmail.com",
+    "password": "123456"
+}
+```
+
+**Campos obrigatórios:**
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `name` | string | Nome do usuário |
+| `email` | string | Email do usuário |
+| `password` | string | Senha do usuário |
+
+**Resposta de sucesso (201):**
+```json
+{
+    "user_id": 1
+}
+```
+
+**Respostas de erro:**
+```json
+{ "erro": "Corpo da requisição inválido" }
+```
+```json
+{ "erro": "Campo obrigatório ausente: password" }
+```
+```json
+{ "erro": "Erro ao criar usuário: ..." }
+```
+
+---
+
+### Login
+**POST** `/login`
+
+**Corpo da requisição (JSON):**
+```json
+{
+    "email": "ariel@email.com",
+    "password": "123456"
+}
+```
+
+**Campos obrigatórios:**
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `email` | string | Email do usuário |
+| `password` | string | Senha do usuário |
+
+**Resposta de sucesso (200):**
+```json
+{
+    "user_id": 1,
+    "name": "Ariel",
+    "email": "ariel@email.com"
+}
+```
+
+**Respostas de erro:**
+```json
+{ "erro": "Email ou senha inválidos" }
+```
+```json
+{ "erro": "Campo obrigatório ausente: email" }
+```
+```json
+{ "erro": "Erro ao realizar login: ..." }
+```
+
 ## 📦 Entregas
 
 ### Listar todas as entregas
