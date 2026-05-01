@@ -153,7 +153,7 @@ def login():
         return jsonify({"erro": f"Erro ao realizar login: {str(e)}"}), 500
 
 
-@app.route("/users", methods=["POST"])
+@app.route("/signup", methods=["POST"])
 def create_user():
     try:
         data = request.get_json()
