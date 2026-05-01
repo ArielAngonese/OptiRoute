@@ -1,5 +1,6 @@
 import mysql.connector
 from backend.config import DB_CONFIG
+import bcrypt
 
 # Abre uma conexão com o banco usando as configurações do config.py
 def connect():
@@ -43,16 +44,18 @@ def get_address_by_id(id_endereco):
 def insert_user(nome, email, senha):
     conn = connect()
     cursor = conn.cursor()
+    hashed = bcrypt.hashpw(senha.encode("utf-8"), bcrypt.gensalt())
     query = """
         INSERT INTO USUARIO (nome, email, senha)
         VALUES (%s, %s, %s)
     """
-    cursor.execute(query, (nome, email, senha))
+    cursor.execute(query, (nome, email, hashed))
     conn.commit()
     id_usuario = cursor.lastrowid
     cursor.close()
     conn.close()
     return id_usuario
+
 
 # Busca um usuário pelo ID e retorna seus detalhes
 def get_user_by_id(id_usuario):
@@ -74,6 +77,22 @@ def get_user_by_email(email):
     conn.close()
     return user
 
+def validate_login(email, senha):
+    user = get_user_by_email(email)
+
+    if user is None:
+        return None
+
+    senha_hash = user["senha"]
+    if isinstance(senha_hash, str):
+        senha_hash = senha_hash.encode("utf-8")
+    elif isinstance(senha_hash, bytearray):
+        senha_hash = bytes(senha_hash)
+
+    if bcrypt.checkpw(senha.encode("utf-8"), senha_hash):
+        return user
+
+    return None
 
 # ─────────────────────────────────────────────
 # DESTINATARIO

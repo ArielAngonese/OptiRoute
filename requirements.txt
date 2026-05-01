@@ -4,3 +4,4 @@ mysql-connector-python==9.6.0
 networkx==3.6.1
 osmnx==2.1.0
 scikit-learn==1.8.0
+bcrypt==5.0.0
