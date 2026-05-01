@@ -3,7 +3,7 @@ from flask_cors import CORS
 from graph import graph
 from services.map import get_nearest_node, get_route_coordinates, calculate_distance, calculate_estimated_time
 from algorithms.dijkstra import calculate_route
-from backend.database import get_all_deliveries, get_delivery_by_id, insert_delivery, insert_address, update_delivery_route, insert_user, validate_login
+from backend.database import get_all_deliveries, get_delivery_by_id, insert_delivery, insert_address, update_delivery_route, insert_user, validate_login, insert_recipient
 
 # Criação da aplicação Flask
 app = Flask(__name__)
@@ -41,7 +41,7 @@ def create_delivery():
         required_fields = [
             "origin_street", "origin_number", "origin_city", "origin_lat", "origin_lng",
             "destination_street", "destination_number", "destination_city", "destination_lat", "destination_lng",
-            "date", "user_id", "recipient_id"
+            "date", "user_id", "recipient_name"
         ]
         for field in required_fields:
             if field not in data:
@@ -63,11 +63,16 @@ def create_delivery():
             data["destination_lng"]
         )
 
+        id_destinatario = insert_recipient(
+            data["recipient_name"],
+            data.get("recipient_phone")
+        )
+
         id_delivery = insert_delivery(
             status="pendente",
             data=data["date"],
             id_usuario=data["user_id"],
-            id_destinatario=data["recipient_id"],
+            id_destinatario=id_destinatario,
             id_endereco_origem=id_origin_address,
             id_endereco_destino=id_destination_address
         )
