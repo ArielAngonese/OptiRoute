@@ -58,6 +58,8 @@ O **Algoritmo de Dijkstra** é executado sobre esse grafo para encontrar o camin
 
 ```
 .
+├── .vscode/
+│   └── settings.json     # Desativar o Pylance
 ├── algorithms/
 │   └── dijkstra.py       # Cálculo de rotas com Dijkstra
 ├── backend/
