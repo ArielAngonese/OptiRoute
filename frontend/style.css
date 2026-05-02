@@ -402,3 +402,82 @@ body {
   font-size: 0.82rem;
   color: var(--gray-500);
 }
+/* ═══════════════════════════════════════════
+   CARDS / LISTAS
+═══════════════════════════════════════════ */
+.section-card {
+  background: #fff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.section-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.section-card-header h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+.ver-todas {
+  font-size: 0.85rem;
+  color: var(--blue);
+  cursor: pointer;
+  text-decoration: none;
+}
+.ver-todas:hover { text-decoration: underline; }
+
+.rota-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--gray-100);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.rota-item:last-child { border-bottom: none; }
+.rota-item:hover { background: var(--gray-50); border-radius: var(--radius-sm); padding-left: 8px; }
+
+.rota-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: var(--blue-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--blue);
+  flex-shrink: 0;
+}
+
+.rota-info { flex: 1; }
+.rota-nome { font-weight: 500; font-size: 0.92rem; color: var(--gray-800); }
+.rota-meta { font-size: 0.8rem; color: var(--gray-500); margin-top: 2px; }
+
+.rota-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Badges de status */
+.badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.badge-concluida  { background: var(--green-light);  color: var(--green); }
+.badge-em_rota    { background: var(--blue-light);   color: var(--blue); }
+.badge-pendente   { background: var(--amber-light);  color: var(--amber); }
+
+.arrow-btn {
+  color: var(--gray-400);
+  font-size: 1.1rem;
+}
