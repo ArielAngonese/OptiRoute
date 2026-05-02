@@ -58,12 +58,17 @@ O **Algoritmo de Dijkstra** é executado sobre esse grafo para encontrar o camin
 
 ```
 .
+├── .vscode/
+│   └── settings.json     # Desativar o Pylance
 ├── algorithms/
 │   └── dijkstra.py       # Cálculo de rotas com Dijkstra
 ├── backend/
 │   ├── app.py            # Servidor Flask e rotas da API
 │   ├── config.py         # Configurações do banco de dados (não versionado)
 │   └── database.py       # Funções de acesso ao banco de dados
+├── docs/
+│   ├── article.md        # Artigo científico do projeto
+│   └── api.md            # Documentação da API
 ├── frontend/
 │   ├── index.html        # Interface web principal
 │   ├── script.js         # Lógica de interação do frontend

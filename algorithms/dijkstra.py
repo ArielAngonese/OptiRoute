@@ -1,36 +1,35 @@
-import math
+import heapq
 
 def calculate_route(graph, origin_node, destination_node):
     distances = {node: float("inf") for node in graph.nodes} # Dicionário que inicializa as distâncias como infinito
     distances[origin_node] = 0 
     previous = {node: None for node in graph.nodes} # Dicionário que inicializa todos os nós já visitados como None
-    unvisited = set(graph.nodes) # Conjunto com todos os nós do grafo que não foram visitádos ainda
+    priority_queue = [(0, origin_node)] # Fila de prioridade com todos os nós do grafo que não foram visitádos ainda
 
-    while unvisited:
-        current = min(unvisited, key=lambda node: distances[node]) # Encontra o nó com a menor distância entre os nós não visitados
+    while priority_queue:
+        current_distance, current = heapq.heappop(priority_queue) # Pega o nó com a menor distância da fila de prioridade
 
         if current == destination_node: 
             break
 
-        if distances[current] == float("inf"):
-            break
+        if current_distance > distances[current]: 
+            continue
 
-        unvisited.remove(current) # Remove o nó atual do conjunto dos que não foram visitados
+        for neighbor in graph.neighbors(current): # Para cada vizinho do nó atual, calcula a distância até ele
+            edge_data = graph[current][neighbor][0] # Pega os dados da aresta entre o nó atual e o vizinho
+            weight = edge_data.get("length", 1) # Pega o peso da aresta (distância), se não tiver, assume 1
+            new_distance = distances[current] + weight 
 
-        for neighbor in graph.neighbors(current): # Percorre todos os nós visinhos ao atual
-            edge_data = graph[current][neighbor][0] # Pega o primeiro dados da aresta entre o nó atual e o vizinho
-            weight = edge_data.get("length", 1) # Pega o comprimento da rua em metros
-            new_distance = distances[current] + weight # Calcula a distância total passando pelo nó atual até esse vizinho
-
-            if new_distance < distances[neighbor]: # Se a nova distância for menor que anterior, atualiza
+            if new_distance < distances[neighbor]:
                 distances[neighbor] = new_distance
                 previous[neighbor] = current
+                heapq.heappush(priority_queue, (new_distance, neighbor))
 
-    path = [] # Reconstrói o caminho de trás pra frente
+    path = []
     current = destination_node
     while current is not None:
         path.append(current)
         current = previous[current]
 
-    path.reverse() 
+    path.reverse()
     return path

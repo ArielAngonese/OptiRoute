@@ -3,7 +3,17 @@ from flask_cors import CORS
 from graph import graph
 from services.map import get_nearest_node, get_route_coordinates, calculate_distance, calculate_estimated_time
 from algorithms.dijkstra import calculate_route
-from backend.database import get_all_deliveries, get_delivery_by_id, insert_delivery, insert_address, update_delivery_route
+from backend.database import (
+    get_all_deliveries, 
+    get_delivery_by_id, 
+    insert_delivery, 
+    insert_address, 
+    update_delivery_route, 
+    insert_user, 
+    validate_login, 
+    insert_recipient, 
+    update_delivery_status
+)
 
 # Criação da aplicação Flask
 app = Flask(__name__)
@@ -41,7 +51,7 @@ def create_delivery():
         required_fields = [
             "origin_street", "origin_number", "origin_city", "origin_lat", "origin_lng",
             "destination_street", "destination_number", "destination_city", "destination_lat", "destination_lng",
-            "date", "user_id", "recipient_id"
+            "date", "user_id", "recipient_name"
         ]
         for field in required_fields:
             if field not in data:
@@ -63,11 +73,16 @@ def create_delivery():
             data["destination_lng"]
         )
 
+        id_destinatario = insert_recipient(
+            data["recipient_name"],
+            data.get("recipient_phone")
+        )
+
         id_delivery = insert_delivery(
             status="pendente",
             data=data["date"],
             id_usuario=data["user_id"],
-            id_destinatario=data["recipient_id"],
+            id_destinatario=id_destinatario,
             id_endereco_origem=id_origin_address,
             id_endereco_destino=id_destination_address
         )
@@ -124,3 +139,77 @@ def calculate_route_api():
     # Tratamento de erros em caso de falhas na rota ou dados inválidos
     except Exception as e:
         return jsonify({"erro": f"Erro ao calcular rota: {str(e)}"}), 500
+
+@app.route("/login", methods=["POST"])
+def login():
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"erro": "Corpo da requisição inválido"}), 400
+
+        required_fields = ["email", "password"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"erro": f"Campo obrigatório ausente: {field}"}), 400
+
+        user = validate_login(data["email"], data["password"])
+
+        if user is None:
+            return jsonify({"erro": "Email ou senha inválidos"}), 401
+
+        return jsonify({
+            "user_id": user["id_usuario"],
+            "name": user["nome"],
+            "email": user["email"]
+        })
+
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao realizar login: {str(e)}"}), 500
+
+
+@app.route("/signup", methods=["POST"])
+def create_user():
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"erro": "Corpo da requisição inválido"}), 400
+
+        required_fields = ["name", "email", "password"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"erro": f"Campo obrigatório ausente: {field}"}), 400
+
+        id_usuario = insert_user(data["name"], data["email"], data["password"])
+
+        return jsonify({"user_id": id_usuario}), 201
+
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao criar usuário: {str(e)}"}), 500
+    
+@app.route("/deliveries/<int:id>/status", methods=["PATCH"])
+def update_status(id):
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"erro": "Corpo da requisição inválido"}), 400
+
+        if "status" not in data:
+            return jsonify({"erro": "Campo obrigatório ausente: status"}), 400
+
+        valid_statuses = ["pendente", "em_rota", "entregue"]
+        if data["status"] not in valid_statuses:
+            return jsonify({"erro": f"Status inválido. Use: {valid_statuses}"}), 400
+
+        delivery = get_delivery_by_id(id)
+        if delivery is None:
+            return jsonify({"erro": "Entrega não encontrada"}), 404
+
+        update_delivery_status(id, data["status"])
+
+        return jsonify({"mensagem": "Status atualizado com sucesso"})
+
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao atualizar status: {str(e)}"}), 500
