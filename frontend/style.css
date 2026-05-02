@@ -897,3 +897,13 @@ body {
 }
 .ordem-addr.entregue { text-decoration: line-through; color: var(--gray-400); }
 .ordem-tipo { font-size: 0.75rem; color: var(--gray-400); margin-top: 2px; }
+
+/* ═══════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════ */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--gray-400);
+  font-size: 0.9rem;
+}
