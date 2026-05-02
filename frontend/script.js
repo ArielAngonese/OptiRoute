@@ -145,3 +145,38 @@ async function carregarDashboard() {
     ? recentes.map(e => rotaItemHTML(e)).join('')
     : '<div class="empty-state">Nenhuma rota encontrada.</div>';
 }
+// ═══════════════════════════════════════════
+//   HISTÓRICO
+// ═══════════════════════════════════════════
+
+// Carrega as entregas e exibe no histórico
+async function carregarHistorico() {
+  if (!entregas.length) {
+    try {
+      // Busca as entregas na API
+      const res = await fetch(`${API_URL}/deliveries`);
+      entregas = await res.json();
+    } catch (e) {
+      // Backend indisponível — usa dados de exemplo
+      entregas = dadosExemplo();
+    }
+  }
+  renderHistorico();
+}
+
+// Renderiza a lista de entregas na tela
+function renderHistorico() {
+  const busca = document.getElementById('busca-rota').value.toLowerCase();
+  let lista = entregas;
+
+  // Aplica filtro de status
+  if (filtroAtual !== 'todas') lista = lista.filter(e => e.status === filtroAtual);
+
+  // Aplica filtro de busca por nome
+  if (busca) lista = lista.filter(e => (e.nome || '').toLowerCase().includes(busca));
+
+  const container = document.getElementById('lista-historico');
+  container.innerHTML = lista.length
+    ? lista.map(e => historicoItemHTML(e)).join('')
+    : '<div class="empty-state">Nenhuma rota encontrada.</div>';
+}
