@@ -432,3 +432,61 @@ function abrirMapaEntrega(entrega) {
 function salvarRota() {
   alert('Rota salva com sucesso!');
 }
+// ═══════════════════════════════════════════
+//   HTML HELPERS
+// ═══════════════════════════════════════════
+
+// Ícone SVG usado nos cards de rota
+function rotaIconSVG() {
+  return `<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path d="M3 5C3 5 6 10 9 10C12 10 15 5 15 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M3 13C3 13 6 8 9 8C12 10 15 13 15 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>`;
+}
+
+// Gera o badge de status da entrega
+function badgeHTML(status) {
+  const labels = { concluida: 'Concluída', em_rota: 'Em Andamento', pendente: 'Pendente' };
+  return `<span class="badge badge-${status}">${labels[status] || status}</span>`;
+}
+
+// Gera o HTML de um item de rota no dashboard
+function rotaItemHTML(e) {
+  const km = e.distancia ? e.distancia + ' km' : '—';
+  const min = e.tempo_estimado ? e.tempo_estimado + ' min' : '—';
+  const nome = e.nome || `Entrega #${e.id_entrega}`;
+  return `
+    <div class="rota-item" onclick='abrirMapaEntrega(${JSON.stringify(e)})'>
+      <div class="rota-icon">${rotaIconSVG()}</div>
+      <div class="rota-info">
+        <div class="rota-nome">${nome}</div>
+        <div class="rota-meta">${km} · ${min}</div>
+      </div>
+      <div class="rota-right">
+        ${badgeHTML(e.status)}
+        <span class="arrow-btn">→</span>
+      </div>
+    </div>`;
+}
+
+// Gera o HTML de um item no histórico
+function historicoItemHTML(e) {
+  const km = e.distancia ? e.distancia + ' km' : '—';
+  const min = e.tempo_estimado ? e.tempo_estimado + ' min' : '—';
+  const nome = e.nome || `Entrega #${e.id_entrega}`;
+  const data = e.data ? new Date(e.data).toLocaleDateString('pt-BR') : '—';
+  return `
+    <div class="historico-item" onclick='abrirMapaEntrega(${JSON.stringify(e)})'>
+      <div class="hist-icon">${rotaIconSVG()}</div>
+      <div class="hist-info">
+        <div class="hist-nome">${nome} ${badgeHTML(e.status)}</div>
+        <div class="hist-meta">
+          <span>📍 ${e.rua_origem || '—'}</span>
+          <span>↔ ${km}</span>
+          <span>⏱ ${min}</span>
+          <span>📅 ${data}</span>
+        </div>
+      </div>
+      <span class="arrow-btn">→</span>
+    </div>`;
+}
