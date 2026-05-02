@@ -180,3 +180,22 @@ function renderHistorico() {
     ? lista.map(e => historicoItemHTML(e)).join('')
     : '<div class="empty-state">Nenhuma rota encontrada.</div>';
 }
+// ═══════════════════════════════════════════
+//   FILTROS DO HISTÓRICO
+// ═══════════════════════════════════════════
+
+// Filtra o histórico conforme o texto digitado
+function filtrarHistorico() {
+  renderHistorico();
+}
+
+// Define o filtro ativo e atualiza a lista
+function setFiltro(filtro, btn) {
+  filtroAtual = filtro;
+
+  // Remove o active de todos os botões e coloca no clicado
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  renderHistorico();
+}
