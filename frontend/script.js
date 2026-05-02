@@ -102,3 +102,46 @@ async function handleRegister() {
     showPage('page-login');
   }
 }
+// ═══════════════════════════════════════════
+//   DASHBOARD
+// ═══════════════════════════════════════════
+
+// Carrega os dados do dashboard — data atual e estatísticas
+async function carregarDashboard() {
+  // Exibe a data atual formatada
+  const dias = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+  const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const hoje = new Date();
+  document.getElementById('dashboard-date').textContent =
+    `${dias[hoje.getDay()]}, ${hoje.getDate()} de ${meses[hoje.getMonth()]}`;
+
+  try {
+    // Busca as entregas na API
+    const res = await fetch(`${API_URL}/deliveries`);
+    entregas = await res.json();
+  } catch (e) {
+    // Backend indisponível — usa dados de exemplo
+    entregas = dadosExemplo();
+  }
+
+  // Calcula as estatísticas
+  const total = entregas.length;
+  const concluidas = entregas.filter(e => e.status === 'concluida').length;
+  const kmTotal = entregas.reduce((s, e) => s + (e.distancia || 0), 0);
+  const tempoMedio = entregas.length
+    ? Math.round(entregas.reduce((s, e) => s + (e.tempo_estimado || 0), 0) / entregas.length)
+    : 0;
+
+  // Atualiza os cards de estatísticas na tela
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-concluidas').textContent = concluidas;
+  document.getElementById('stat-km').textContent = kmTotal.toFixed(1) + ' km';
+  document.getElementById('stat-tempo').textContent = tempoMedio + ' min';
+
+  // Exibe as 4 rotas mais recentes
+  const recentes = [...entregas].slice(0, 4);
+  const container = document.getElementById('lista-recentes');
+  container.innerHTML = recentes.length
+    ? recentes.map(e => rotaItemHTML(e)).join('')
+    : '<div class="empty-state">Nenhuma rota encontrada.</div>';
+}
