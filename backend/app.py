@@ -4,8 +4,10 @@ from graph import graph
 from services.map import get_nearest_node, get_route_coordinates, calculate_distance, calculate_estimated_time
 from algorithms.dijkstra import calculate_route
 from backend.database import (
+    get_address_by_coords,
     get_all_deliveries, 
     get_delivery_by_id,
+    get_recipient_by_phone,
     get_user_by_email, 
     insert_delivery, 
     insert_address, 
@@ -62,26 +64,38 @@ def create_delivery():
             if field not in data:
                 return jsonify({"erro": f"Campo obrigatório ausente: {field}"}), 400
 
-        id_origin_address = insert_address(
-            data["origin_street"],
-            data["origin_number"],
-            data["origin_city"],
-            data["origin_lat"],
-            data["origin_lng"]
-        )
+        existing_origin = get_address_by_coords(data["origin_lat"], data["origin_lng"])
+        if existing_origin is not None:
+            id_origin_address = existing_origin["id_endereco"]
+        else:
+            id_origin_address = insert_address(
+                data["origin_street"],
+                data["origin_number"],
+                data["origin_city"],
+                data["origin_lat"],
+                data["origin_lng"]
+            )
 
-        id_destination_address = insert_address(
-            data["destination_street"],
-            data["destination_number"],
-            data["destination_city"],
-            data["destination_lat"],
-            data["destination_lng"]
-        )
+        existing_destination = get_address_by_coords(data["destination_lat"], data["destination_lng"])
+        if existing_destination is not None:
+            id_destination_address = existing_destination["id_endereco"]
+        else:
+            id_destination_address = insert_address(
+                data["destination_street"],
+                data["destination_number"],
+                data["destination_city"],
+                data["destination_lat"],
+                data["destination_lng"]
+            )
 
-        id_destinatario = insert_recipient(
-            data["recipient_name"],
-            data.get("recipient_phone")
-        )
+        existing_recipient = get_recipient_by_phone(data.get("recipient_phone"))
+        if existing_recipient is not None:
+            id_destinatario = existing_recipient["id_destinatario"]
+        else:
+            id_destinatario = insert_recipient(
+                data["recipient_name"],
+                data.get("recipient_phone")
+    )
 
         id_delivery = insert_delivery(
             status="pendente",
