@@ -3,7 +3,17 @@ from flask_cors import CORS
 from graph import graph
 from services.map import get_nearest_node, get_route_coordinates, calculate_distance, calculate_estimated_time
 from algorithms.dijkstra import calculate_route
-from backend.database import get_all_deliveries, get_delivery_by_id, insert_delivery, insert_address, update_delivery_route, insert_user, validate_login, insert_recipient, update_delivery_status
+from backend.database import (
+    get_all_deliveries, 
+    get_delivery_by_id, 
+    insert_delivery, 
+    insert_address, 
+    update_delivery_route, 
+    insert_user, 
+    validate_login, 
+    insert_recipient, 
+    update_delivery_status
+)
 
 # Criação da aplicação Flask
 app = Flask(__name__)
