@@ -5,7 +5,8 @@ from services.map import get_nearest_node, get_route_coordinates, calculate_dist
 from algorithms.dijkstra import calculate_route
 from backend.database import (
     get_all_deliveries, 
-    get_delivery_by_id, 
+    get_delivery_by_id,
+    get_user_by_email, 
     insert_delivery, 
     insert_address, 
     update_delivery_route, 
@@ -18,6 +19,10 @@ from backend.database import (
 # Criação da aplicação Flask
 app = Flask(__name__)
 CORS(app)
+
+# ================================
+# Rotas de ENTREGAS
+# ================================
 
 # Rota para obter todas as entregas
 @app.route("/deliveries", methods=["GET"])
@@ -91,7 +96,37 @@ def create_delivery():
     
     except Exception as e:
         return jsonify({"erro": f"Erro ao criar entrega: {str(e)}"}), 500
-    
+
+@app.route("/deliveries/<int:id>/status", methods=["PATCH"])
+def update_status(id):
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"erro": "Corpo da requisição inválido"}), 400
+
+        if "status" not in data:
+            return jsonify({"erro": "Campo obrigatório ausente: status"}), 400
+
+        valid_statuses = ["pendente", "em_rota", "entregue"]
+        if data["status"] not in valid_statuses:
+            return jsonify({"erro": f"Status inválido. Use: {valid_statuses}"}), 400
+
+        delivery = get_delivery_by_id(id)
+        if delivery is None:
+            return jsonify({"erro": "Entrega não encontrada"}), 404
+
+        update_delivery_status(id, data["status"])
+
+        return jsonify({"mensagem": "Status atualizado com sucesso"})
+
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao atualizar status: {str(e)}"}), 500
+
+# ================================
+# Rotas de CALCULO DE ROTA
+# ================================
+
 # Rota para calcular a rota mais curta entre origem e destino
 @app.route("/calculate-route", methods=["POST"])
 def calculate_route_api():
@@ -140,6 +175,10 @@ def calculate_route_api():
     except Exception as e:
         return jsonify({"erro": f"Erro ao calcular rota: {str(e)}"}), 500
 
+# ================================
+# Rotas de LOGIN E CADASTRO
+# ================================
+
 @app.route("/login", methods=["POST"])
 def login():
     try:
@@ -180,6 +219,10 @@ def create_user():
         for field in required_fields:
             if field not in data:
                 return jsonify({"erro": f"Campo obrigatório ausente: {field}"}), 400
+            
+        existing_user = get_user_by_email(data["email"])
+        if existing_user is not None:
+            return jsonify({"erro": "Email já cadastrado"}), 409
 
         id_usuario = insert_user(data["name"], data["email"], data["password"])
 
@@ -187,29 +230,4 @@ def create_user():
 
     except Exception as e:
         return jsonify({"erro": f"Erro ao criar usuário: {str(e)}"}), 500
-    
-@app.route("/deliveries/<int:id>/status", methods=["PATCH"])
-def update_status(id):
-    try:
-        data = request.get_json()
 
-        if not data:
-            return jsonify({"erro": "Corpo da requisição inválido"}), 400
-
-        if "status" not in data:
-            return jsonify({"erro": "Campo obrigatório ausente: status"}), 400
-
-        valid_statuses = ["pendente", "em_rota", "entregue"]
-        if data["status"] not in valid_statuses:
-            return jsonify({"erro": f"Status inválido. Use: {valid_statuses}"}), 400
-
-        delivery = get_delivery_by_id(id)
-        if delivery is None:
-            return jsonify({"erro": "Entrega não encontrada"}), 404
-
-        update_delivery_status(id, data["status"])
-
-        return jsonify({"mensagem": "Status atualizado com sucesso"})
-
-    except Exception as e:
-        return jsonify({"erro": f"Erro ao atualizar status: {str(e)}"}), 500
