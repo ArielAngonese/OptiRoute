@@ -490,3 +490,25 @@ function historicoItemHTML(e) {
       <span class="arrow-btn">→</span>
     </div>`;
 }
+// ═══════════════════════════════════════════
+//   DADOS DE EXEMPLO
+// ═══════════════════════════════════════════
+
+// Retorna dados simulados quando o backend não está disponível
+function dadosExemplo() {
+  return [
+    { id_entrega: 1, nome: 'Entrega Centro — 13/04', status: 'concluida', distancia: 12.4, tempo_estimado: 38, data: '2026-04-13', rua_origem: 'Av. Jabaquara', numero_origem: 500, cidade_origem: 'São Paulo', rua_destino: 'Rua Vergueiro', numero_destino: 3000, cidade_destino: 'São Paulo', lat_origem: -23.62, lng_origem: -46.65, lat_destino: -23.58, lng_destino: -46.63 },
+    { id_entrega: 2, nome: 'Rota Zona Sul — 12/04', status: 'em_rota', distancia: 18.7, tempo_estimado: 55, data: '2026-04-12', rua_origem: 'Av. Saúde', numero_origem: 1200, cidade_origem: 'São Paulo', rua_destino: 'Rua Domingos de Moraes', numero_destino: 600, cidade_destino: 'São Paulo', lat_origem: -23.63, lng_origem: -46.64, lat_destino: -23.60, lng_destino: -46.62 },
+    { id_entrega: 3, nome: 'Distribuição Lapa — 11/04', status: 'concluida', distancia: 8.2, tempo_estimado: 25, data: '2026-04-11', rua_origem: 'Rua Guaicurus', numero_origem: 100, cidade_origem: 'São Paulo', rua_destino: 'Av. Pompéia', numero_destino: 400, cidade_destino: 'São Paulo', lat_origem: -23.53, lng_origem: -46.70, lat_destino: -23.54, lng_destino: -46.68 },
+    { id_entrega: 4, nome: 'Entrega Pinheiros — 10/04', status: 'pendente', distancia: 9.6, tempo_estimado: 30, data: '2026-04-10', rua_origem: 'Rua dos Pinheiros', numero_origem: 500, cidade_origem: 'São Paulo', rua_destino: 'Av. Faria Lima', numero_destino: 2000, cidade_destino: 'São Paulo', lat_origem: -23.56, lng_origem: -46.67, lat_destino: -23.57, lng_destino: -46.69 },
+  ];
+}
+
+// ═══════════════════════════════════════════
+//   INICIALIZAÇÃO
+// ═══════════════════════════════════════════
+
+// Executa quando a página termina de carregar
+document.addEventListener('DOMContentLoaded', () => {
+  atualizarContadorDestinos();
+});
