@@ -322,3 +322,113 @@ async function geocodificar(endereco) {
   if (!data.length) throw new Error('Endereço não encontrado: ' + endereco);
   return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
 }
+// ═══════════════════════════════════════════
+//   MAPA
+// ═══════════════════════════════════════════
+
+// Abre a tela do mapa e exibe a rota calculada
+function abrirMapa(rota) {
+  showApp('mapa');
+
+  // Atualiza o cabeçalho do mapa
+  document.getElementById('mapa-titulo').textContent = rota.nome;
+  document.getElementById('mapa-subtitulo').textContent = `${rota.destinos.length} entrega(s)`;
+
+  // Atualiza os cards de resumo
+  document.getElementById('resumo-km').textContent = rota.distance_km + ' km';
+  document.getElementById('resumo-tempo').textContent = rota.estimated_time_minutes + ' min';
+  document.getElementById('resumo-paradas').textContent = rota.destinos.length;
+  document.getElementById('resumo-entregues').textContent = '0';
+
+  // Atualiza a barra de progresso
+  document.getElementById('progresso-pct').textContent = '0%';
+  document.getElementById('progresso-fill').style.width = '0%';
+
+  // Monta a ordem das entregas
+  const ordemEl = document.getElementById('ordem-lista');
+  ordemEl.innerHTML = `
+    <div class="ordem-item">
+      <div class="ordem-num partida">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M6 1l1.5 3H11L8.5 6l1 3L6 7.5 2.5 9l1-3L1 4h3.5L6 1z" fill="white"/>
+        </svg>
+      </div>
+      <div>
+        <div class="ordem-addr">Partida</div>
+        <div class="ordem-tipo">${rota.origem}</div>
+      </div>
+    </div>
+    ${rota.destinos.map((d, i) => `
+      <div class="ordem-item">
+        <div class="ordem-num">${i + 1}</div>
+        <div>
+          <div class="ordem-addr">${d}</div>
+          <div class="ordem-tipo">Parada ${i + 1}</div>
+        </div>
+      </div>
+    `).join('')}
+  `;
+
+  // Inicializa o mapa Leaflet
+  setTimeout(() => {
+    if (mapInstance) {
+      mapInstance.remove();
+      mapInstance = null;
+    }
+
+    const coords = rota.route && rota.route.length ? rota.route : [[-27.63, -52.26]];
+    mapInstance = L.map('map').setView(coords[0], 13);
+
+    // Carrega as tiles do OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(mapInstance);
+
+    // Desenha a linha da rota no mapa
+    if (coords.length > 1) {
+      L.polyline(coords, { color: '#2563eb', weight: 4, opacity: 0.8 }).addTo(mapInstance);
+    }
+
+    // Marcador de partida
+    const iconPartida = L.divIcon({
+      html: '<div style="width:14px;height:14px;background:#2563eb;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>',
+      iconSize: [14, 14], iconAnchor: [7, 7], className: ''
+    });
+
+    // Marcador de destino
+    const iconDestino = L.divIcon({
+      html: '<div style="width:14px;height:14px;background:#dc2626;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>',
+      iconSize: [14, 14], iconAnchor: [7, 7], className: ''
+    });
+
+    L.marker(coords[0], { icon: iconPartida }).bindPopup('Partida: ' + rota.origem).addTo(mapInstance);
+    L.marker(coords[coords.length - 1], { icon: iconDestino }).bindPopup('Destino: ' + rota.destinos[0]).addTo(mapInstance);
+
+    // Ajusta o zoom para mostrar toda a rota
+    mapInstance.fitBounds(L.polyline(coords).getBounds(), { padding: [40, 40] });
+  }, 100);
+}
+
+// Abre o mapa a partir de uma entrega existente
+function abrirMapaEntrega(entrega) {
+  if (!entrega) return;
+
+  const rota = {
+    nome: entrega.nome || `Entrega #${entrega.id_entrega}`,
+    origem: `${entrega.rua_origem}, ${entrega.numero_origem} — ${entrega.cidade_origem}`,
+    destinos: [`${entrega.rua_destino}, ${entrega.numero_destino} — ${entrega.cidade_destino}`],
+    route: entrega.lat_origem
+      ? [[entrega.lat_origem, entrega.lng_origem], [entrega.lat_destino, entrega.lng_destino]]
+      : [[-27.63, -52.26], [-27.65, -52.28]],
+    distance_km: entrega.distancia || '—',
+    estimated_time_minutes: entrega.tempo_estimado || '—'
+  };
+
+  rotaAtual = rota;
+  abrirMapa(rota);
+}
+
+// Salva a rota atual
+function salvarRota() {
+  alert('Rota salva com sucesso!');
+}
