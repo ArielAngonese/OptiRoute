@@ -199,3 +199,53 @@ function setFiltro(filtro, btn) {
 
   renderHistorico();
 }
+// ═══════════════════════════════════════════
+//   NOVA ROTA — DESTINOS
+// ═══════════════════════════════════════════
+
+// Adiciona um novo campo de destino na lista
+function addDestino() {
+  const lista = document.getElementById('lista-destinos');
+  const num = lista.querySelectorAll('.destino-item').length + 1;
+  const div = document.createElement('div');
+  div.className = 'destino-item';
+  div.innerHTML = `
+    <span class="destino-num">${num}</span>
+    <input type="text" class="form-input destino-input" placeholder="Endereço ${num}" />
+    <button class="btn-remove" onclick="removeDestino(this)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 4h10M5 4V3a1 1 0 0 1 2 0v1M9 4V3a1 1 0 0 0-2 0v1M5 7v4M9 7v4M3 4l.7 7.3A1 1 0 0 0 4.7 12h4.6a1 1 0 0 0 1-.7L11 4"
+          stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </button>`;
+  lista.appendChild(div);
+  atualizarContadorDestinos();
+}
+
+// Remove um destino da lista
+function removeDestino(btn) {
+  const item = btn.closest('.destino-item');
+  const lista = document.getElementById('lista-destinos');
+  if (lista.querySelectorAll('.destino-item').length > 1) {
+    item.remove();
+    reordenarDestinos();
+  } else {
+    // Mantém pelo menos um campo — só limpa o valor
+    item.querySelector('.destino-input').value = '';
+  }
+  atualizarContadorDestinos();
+}
+
+// Reordena os números dos destinos após remoção
+function reordenarDestinos() {
+  document.querySelectorAll('.destino-item').forEach((item, i) => {
+    item.querySelector('.destino-num').textContent = i + 1;
+    item.querySelector('.destino-input').placeholder = `Endereço ${i + 1}`;
+  });
+}
+
+// Atualiza o contador de endereços
+function atualizarContadorDestinos() {
+  const n = document.querySelectorAll('.destino-input').length;
+  document.getElementById('count-destinos').textContent = `${n} endereço(s)`;
+}
