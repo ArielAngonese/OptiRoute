@@ -199,3 +199,108 @@ body {
 
 /* Mensagem de erro */
 .msg { font-size: 0.85rem; color: var(--red); text-align: center; min-height: 1rem; }
+/* ═══════════════════════════════════════════
+   APP LAYOUT
+═══════════════════════════════════════════ */
+#page-app { flex-direction: row; }
+
+.app-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 0.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 1.5rem;
+}
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+.brand-sub {
+  color: rgba(255,255,255,0.45);
+  font-size: 0.75rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.55);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-decoration: none;
+  user-select: none;
+}
+.nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
+.nav-item.active { background: var(--blue); color: #fff; }
+
+.btn-sair {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.6rem 0.75rem;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.45);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+.btn-sair:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.06); }
+
+/* MAIN */
+.main-content {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  overflow-y: auto;
+  background: var(--gray-50);
+}
+
+.app-section { display: none; }
+.app-section.active { display: block; }
