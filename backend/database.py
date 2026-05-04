@@ -35,6 +35,17 @@ def get_address_by_id(id_endereco):
     conn.close()
     return address
 
+def get_address_by_coords(latitude, longitude):
+    conn = connect()
+    cursor = conn.cursor(dictionary=True, buffered=True)
+    cursor.execute(
+        "SELECT * FROM ENDERECO WHERE latitude = %s AND longitude = %s",
+        (latitude, longitude)
+    )
+    address = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return address
 
 # ─────────────────────────────────────────────
 # USUARIO
@@ -118,6 +129,15 @@ def get_recipient_by_id(id_destinatario):
     conn = connect()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM DESTINATARIO WHERE id_destinatario = %s", (id_destinatario,))
+    recipient = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return recipient
+
+def get_recipient_by_phone(telefone):
+    conn = connect()
+    cursor = conn.cursor(dictionary=True,  buffered=True)
+    cursor.execute("SELECT * FROM DESTINATARIO WHERE telefone = %s", (telefone,))
     recipient = cursor.fetchone()
     cursor.close()
     conn.close()
