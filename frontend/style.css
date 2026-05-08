@@ -64,15 +64,24 @@ body {
   gap: 1rem;
 }
 
-.logo-circle {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--navy);
+/* Logo do login */
+.logo-login-wrap {
   display: flex;
-  align-items: center;
   justify-content: center;
   margin: 0 auto 0.5rem;
+}
+
+.logo-login-img {
+  width: 180px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Logo da sidebar */
+.brand-logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }
 
 .auth-title {
@@ -675,97 +684,7 @@ body {
   gap: 16px;
 }
 .hist-meta span { display: flex; align-items: center; gap: 4px; }
-/* ═══════════════════════════════════════════
-   HISTÓRICO
-═══════════════════════════════════════════ */
-.historico-filters {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
 
-.search-box {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 200px;
-  background: #fff;
-  border: 1.5px solid var(--gray-200);
-  border-radius: var(--radius-sm);
-  padding: 0.55rem 0.9rem;
-  color: var(--gray-400);
-}
-.search-box input {
-  border: none;
-  outline: none;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.9rem;
-  color: var(--gray-700);
-  background: transparent;
-  width: 100%;
-}
-
-.filter-btns { display: flex; gap: 6px; }
-.filter-btn {
-  padding: 0.5rem 1rem;
-  border: 1.5px solid var(--gray-200);
-  background: #fff;
-  border-radius: var(--radius-sm);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.85rem;
-  color: var(--gray-600);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.filter-btn:hover { border-color: var(--blue); color: var(--blue); }
-.filter-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
-
-.historico-item {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: #fff;
-  border: 1.5px solid var(--gray-200);
-  border-radius: var(--radius);
-  padding: 1.1rem 1.25rem;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: border-color 0.15s, transform 0.1s;
-}
-.historico-item:hover { border-color: var(--blue); transform: translateX(2px); }
-
-.hist-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-sm);
-  background: var(--blue-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--blue);
-  flex-shrink: 0;
-}
-
-.hist-info { flex: 1; }
-.hist-nome {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--gray-800);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.hist-meta {
-  font-size: 0.8rem;
-  color: var(--gray-500);
-  margin-top: 4px;
-  display: flex;
-  gap: 16px;
-}
-.hist-meta span { display: flex; align-items: center; gap: 4px; }
 /* ═══════════════════════════════════════════
    MAPA
 ═══════════════════════════════════════════ */

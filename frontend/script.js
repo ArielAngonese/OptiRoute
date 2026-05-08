@@ -73,21 +73,22 @@ async function handleLogin() {
 
 // Valida os campos e cria uma nova conta
 async function handleRegister() {
-  const email = document.getElementById('reg-email').value.trim();
-  const senha = document.getElementById('reg-password').value;
-  const confirmar = document.getElementById('reg-confirm').value;
+  const name = document.getElementById('reg-name').value.trim();
+const email = document.getElementById('reg-email').value.trim();
+const senha = document.getElementById('reg-password').value;
+const confirmar = document.getElementById('reg-confirm').value;
   const msg = document.getElementById('reg-msg');
 
-  if (!email || !senha || !confirmar) { msg.textContent = 'Preencha todos os campos.'; return; }
+ if (!name || !email || !senha || !confirmar) { msg.textContent = 'Preencha todos os campos.'; return; }
   if (senha.length < 8) { msg.textContent = 'A senha deve ter no mínimo 8 caracteres.'; return; }
   if (senha !== confirmar) { msg.textContent = 'As senhas não coincidem.'; return; }
 
   try {
     // Envia os dados para a API de cadastro
-    const res = await fetch(`${API_URL}/users`, {
+    const res = await fetch(`${API_URL}/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, senha })
+      body: JSON.stringify({ name, email, password: senha })
     });
 
     if (res.ok) {

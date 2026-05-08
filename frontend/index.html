@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RotaFácil — Entregas Inteligentes</title>
+    <title>OptiRoute — Rotas Inteligentes</title>
     <link rel="stylesheet" href="style.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
@@ -23,15 +23,12 @@
       <div class="auth-bg">
         <div class="auth-card">
           <!-- Logo do sistema -->
-          <div class="logo-circle">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <path
-                d="M16 4L28 10V22L16 28L4 22V10L16 4Z"
-                fill="white"
-                opacity="0.2"
-              />
-              <path d="M16 8L10 20H14V24L22 12H18V8H16Z" fill="white" />
-            </svg>
+          <div class="logo-login-wrap">
+            <img
+              src="assets/logo-login.png"
+              alt="OptiRoute"
+              class="logo-login-img"
+            />
           </div>
 
           <!-- Título e subtítulo -->
@@ -172,6 +169,35 @@
           <h1 class="auth-title" style="font-size: 1.6rem; margin-top: 0.5rem">
             Create your account
           </h1>
+
+          <!-- Campo Nome -->
+          <div class="field-group">
+            <label>Name</label>
+            <div class="input-wrapper">
+              <svg
+                class="input-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+              >
+                <circle
+                  cx="8"
+                  cy="5"
+                  r="3"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                />
+                <path
+                  d="M2 14c0-3 2.7-5 6-5s6 2 6 5"
+                  stroke="currentColor"
+                  stroke-width="1.2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <input type="text" id="reg-name" placeholder="Your full name" />
+            </div>
+          </div>
 
           <!-- Campo Email -->
           <div class="field-group">
@@ -357,13 +383,15 @@
         <aside class="sidebar">
           <div class="sidebar-brand">
             <div class="brand-icon">
-              <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
-                <path d="M16 8L10 20H14V24L22 12H18V8H16Z" fill="white" />
-              </svg>
+              <img
+                src="assets/logo-sem-escrita.png"
+                alt="OptiRoute"
+                class="brand-logo-img"
+              />
             </div>
             <div>
-              <div class="brand-name">RotaFácil</div>
-              <div class="brand-sub">Entregas Inteligentes</div>
+              <div class="brand-name">OptiRoute</div>
+              <div class="brand-sub">Rotas Inteligentes</div>
             </div>
           </div>
 
