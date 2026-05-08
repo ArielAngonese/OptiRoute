@@ -64,15 +64,24 @@ body {
   gap: 1rem;
 }
 
-.logo-circle {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--navy);
+/* Logo do login */
+.logo-login-wrap {
   display: flex;
-  align-items: center;
   justify-content: center;
   margin: 0 auto 0.5rem;
+}
+
+.logo-login-img {
+  width: 180px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Logo da sidebar */
+.brand-logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }
 
 .auth-title {
