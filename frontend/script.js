@@ -73,9 +73,10 @@ async function handleLogin() {
 
 // Valida os campos e cria uma nova conta
 async function handleRegister() {
-  const email = document.getElementById('reg-email').value.trim();
-  const senha = document.getElementById('reg-password').value;
-  const confirmar = document.getElementById('reg-confirm').value;
+  const name = document.getElementById('reg-name').value.trim();
+const email = document.getElementById('reg-email').value.trim();
+const senha = document.getElementById('reg-password').value;
+const confirmar = document.getElementById('reg-confirm').value;
   const msg = document.getElementById('reg-msg');
 
   if (!email || !senha || !confirmar) { msg.textContent = 'Preencha todos os campos.'; return; }
