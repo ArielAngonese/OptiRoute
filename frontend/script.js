@@ -84,7 +84,7 @@ async function handleRegister() {
 
   try {
     // Envia os dados para a API de cadastro
-    const res = await fetch(`${API_URL}/users`, {
+    const res = await fetch(`${API_URL}/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha })
