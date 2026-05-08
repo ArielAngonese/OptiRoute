@@ -88,7 +88,7 @@ const confirmar = document.getElementById('reg-confirm').value;
     const res = await fetch(`${API_URL}/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, senha })
+      body: JSON.stringify({ name, email, password: senha })
     });
 
     if (res.ok) {
