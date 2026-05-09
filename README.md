@@ -32,13 +32,13 @@ O sistema integra conceitos de **banco de dados**, **engenharia de software** e 
 
 ## 🛠️ Tecnologias Utilizadas
 
-| Camada | Tecnologia |
-|--------|-----------|
-| Frontend | HTML5, CSS3, JavaScript |
-| Backend | Python 3, Flask |
-| Banco de Dados | MySQL |
+| Camada             | Tecnologia                       |
+| ------------------ | -------------------------------- |
+| Frontend           | HTML5, CSS3, JavaScript          |
+| Backend            | Python 3, Flask                  |
+| Banco de Dados     | MySQL                            |
 | Algoritmo de Rotas | Dijkstra (implementação própria) |
-| Dados Geográficos | OpenStreetMap (via OSMnx) |
+| Dados Geográficos  | OpenStreetMap (via OSMnx)        |
 
 ---
 
@@ -70,6 +70,7 @@ O **Algoritmo de Dijkstra** é executado sobre esse grafo para encontrar o camin
 │   ├── article.md        # Artigo científico do projeto
 │   └── api.md            # Documentação da API
 ├── frontend/
+│   ├── assets/           # Logos e imagens do sistema
 │   ├── index.html        # Interface web principal
 │   ├── script.js         # Lógica de interação do frontend
 │   └── style.css         # Estilos da interface
@@ -96,12 +97,14 @@ O **Algoritmo de Dijkstra** é executado sobre esse grafo para encontrar o camin
 ## 🚀 Como Executar
 
 **1. Clone o repositório**
+
 ```bash
 git clone https://github.com/ArielAngonese/Sistema-de-Otimizacao-de-Rotas-para-Entregas-Urbanas.git
 cd Sistema-de-Otimizacao-de-Rotas-para-Entregas-Urbanas
 ```
 
 **2. Instale os pré-requisitos**
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -109,6 +112,7 @@ pip install -r requirements.txt
 **3. Configure o banco de dados**
 
 Edite o arquivo `config.py` com suas credenciais MySQL:
+
 ```python
 DB_CONFIG = {
     "host": "seu_host_railway",
@@ -120,6 +124,7 @@ DB_CONFIG = {
 ```
 
 **4. Inicie o servidor**
+
 ```bash
 python main.py
 ```
@@ -151,9 +156,9 @@ Problema clássico de otimização e logística que envolve a definição de rot
 
 ## 📚 Referências
 
-- DIJKSTRA, E. W. A note on two problems in connexion with graphs. *Numerische Mathematik*, 1:269–271, 1959.
-- LAPORTE, G. Fifty years of vehicle routing. *Transportation Science*, 43(4):408–416, 2009.
-- SOLOMON, M. M. Algorithms for the vehicle routing and scheduling problems with time window constraints. *Operations Research*, 35(2):254–265, 1987.
+- DIJKSTRA, E. W. A note on two problems in connexion with graphs. _Numerische Mathematik_, 1:269–271, 1959.
+- LAPORTE, G. Fifty years of vehicle routing. _Transportation Science_, 43(4):408–416, 2009.
+- SOLOMON, M. M. Algorithms for the vehicle routing and scheduling problems with time window constraints. _Operations Research_, 35(2):254–265, 1987.
 - OpenStreetMap contributors. OpenStreetMap. Disponível em: https://www.openstreetmap.org. Acesso em: 29 mar. 2026.
 - Pallets Projects. Flask Documentation. Disponível em: https://flask.palletsprojects.com. Acesso em: 29 mar. 2026.
 - Python Software Foundation. Python Documentation. Disponível em: https://docs.python.org. Acesso em: 29 mar. 2026.
