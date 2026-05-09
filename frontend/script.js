@@ -438,10 +438,22 @@ function salvarRota() {
 // ═══════════════════════════════════════════
 
 // Ícone SVG usado nos cards de rota
-function rotaIconSVG() {
+function rotaIconSVG(status) {
+  // Ícone muda conforme o status da entrega
+  if (status === 'concluida') {
+    return `<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M3 9l4 4 8-8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  }
+  if (status === 'em_rota') {
+    return `<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  }
+  // Pendente — ícone de relógio
   return `<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-    <path d="M3 5C3 5 6 10 9 10C12 10 15 5 15 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-    <path d="M3 13C3 13 6 8 9 8C12 10 15 13 15 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M9 5v4l3 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
   </svg>`;
 }
 
@@ -458,7 +470,7 @@ function rotaItemHTML(e) {
   const nome = e.nome || `Entrega #${e.id_entrega}`;
   return `
     <div class="rota-item" onclick='abrirMapaEntrega(${JSON.stringify(e)})'>
-      <div class="rota-icon">${rotaIconSVG()}</div>
+    <div class="rota-icon">${rotaIconSVG(e.status)}</div>
       <div class="rota-info">
         <div class="rota-nome">${nome}</div>
         <div class="rota-meta">${km} · ${min}</div>
@@ -478,7 +490,7 @@ function historicoItemHTML(e) {
   const data = e.data ? new Date(e.data).toLocaleDateString('pt-BR') : '—';
   return `
     <div class="historico-item" onclick='abrirMapaEntrega(${JSON.stringify(e)})'>
-      <div class="hist-icon">${rotaIconSVG()}</div>
+    <div class="hist-icon">${rotaIconSVG(e.status)}</div>
       <div class="hist-info">
         <div class="hist-nome">${nome} ${badgeHTML(e.status)}</div>
         <div class="hist-meta">
