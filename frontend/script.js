@@ -51,7 +51,7 @@ function showApp(section) {
 //   AUTH — LOGIN
 // ═══════════════════════════════════════════
 
-// Valida os campos e faz o login do usuário
+/// Valida os campos e faz o login do usuário
 async function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
   const senha = document.getElementById('login-password').value;
@@ -61,11 +61,31 @@ async function handleLogin() {
     return;
   }
 
-  // Simulação de login — integração com backend em desenvolvimento
-  currentUser = { id: 1, nome: 'Alisson', email };
-  showPage('page-app');
-  showApp('dashboard');
+  try {
+    // Chama a rota POST /login do backend de verdade
+    const res = await fetch(`${API_URL}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: senha })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.erro || 'Email ou senha inválidos.');
+      return;
+    }
+    
+    // Salva o usuário logado com os dados reais do backend
+    currentUser = { id: data.user_id, nome: data.name, email: data.email };
+    showPage('page-app');
+    showApp('dashboard');
+
+  } catch (e) {
+    alert('Erro ao conectar com o servidor.');
+  }
 }
+
 
 // ═══════════════════════════════════════════
 //   AUTH — CADASTRO
