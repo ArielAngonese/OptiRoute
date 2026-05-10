@@ -161,48 +161,59 @@ def update_status(id):
 # Rota para calcular a rota mais curta entre origem e destino
 @app.route("/calculate-route", methods=["POST"])
 def calculate_route_api():
-    try: 
-
+    try:
         data = request.get_json()
 
-        # Validação básica dos dados de entrada
         if not data:
             return jsonify({"erro": "Corpo da requisição inválido"}), 400
-        
-        # Verificação de campos obrigatórios
-        required_fields = ["origin_lat", "origin_lng", "destination_lat", "destination_lng"]
+
+        required_fields = ["origin_lat", "origin_lng", "points"]
         for field in required_fields:
             if field not in data:
                 return jsonify({"erro": f"Campo obrigatório ausente: {field}"}), 400
 
-        origin_lat = data["origin_lat"]
-        origin_lng = data["origin_lng"]
-        destination_lat = data["destination_lat"]
-        destination_lng = data["destination_lng"]
+        if not data["points"] or len(data["points"]) == 0:
+            return jsonify({"erro": "Adicione pelo menos um ponto de entrega"}), 400
 
-        origin_node = get_nearest_node(graph, origin_lat, origin_lng)
-        destination_node = get_nearest_node(graph, destination_lat, destination_lng)
+        # Monta a lista de coordenadas — origem + todos os pontos
+        coords = [(data["origin_lat"], data["origin_lng"])]
+        for point in data["points"]:
+            coords.append((point["lat"], point["lng"]))
 
-        path = calculate_route(graph, origin_node, destination_node)
-        coordinates = get_route_coordinates(graph, path)
+        # Calcula a rota entre cada par de pontos consecutivos
+        full_route = []
+        total_distance = 0
 
-        distance = calculate_distance(graph, path)
-        estimated_time = calculate_estimated_time(distance)
+        for i in range(len(coords) - 1):
+            origin_node = get_nearest_node(graph, coords[i][0], coords[i][1])
+            destination_node = get_nearest_node(graph, coords[i + 1][0], coords[i + 1][1])
+
+            path = calculate_route(graph, origin_node, destination_node)
+            coordinates = get_route_coordinates(graph, path)
+            distance = calculate_distance(graph, path)
+
+            # Evita duplicar o ponto de conexão entre segmentos
+            if full_route:
+                coordinates = coordinates[1:]
+
+            full_route.extend(coordinates)
+            total_distance += distance
+
+        estimated_time = calculate_estimated_time(total_distance)
 
         if "delivery_id" in data:
             update_delivery_route(
                 data["delivery_id"],
-                distance,
+                round(total_distance, 2),
                 estimated_time
-            )           
+            )
 
         return jsonify({
-            "route": coordinates,
-            "distance_km": distance,
+            "route": full_route,
+            "distance_km": round(total_distance, 2),
             "estimated_time_minutes": estimated_time
         })
 
-    # Tratamento de erros em caso de falhas na rota ou dados inválidos
     except Exception as e:
         return jsonify({"erro": f"Erro ao calcular rota: {str(e)}"}), 500
 
