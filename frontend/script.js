@@ -171,7 +171,6 @@ async function carregarDashboard() {
 
 // Carrega as entregas e exibe no histórico
 async function carregarHistorico() {
-  if (!entregas.length) {
     try {
       // Busca as entregas na API
       const res = await fetch(`${API_URL}/deliveries`);
@@ -180,7 +179,6 @@ async function carregarHistorico() {
       // Backend indisponível — usa dados de exemplo
       entregas = dadosExemplo();
     }
-  }
   renderHistorico();
 }
 
@@ -361,6 +359,7 @@ async function calcularRota() {
   btn.textContent = 'Calcular Rota Otimizada';
   btn.disabled = false;
 
+  entregas = []; // Força recarregar o histórico na próxima vez
   abrirMapa(rotaAtual);
 }
 
