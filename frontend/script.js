@@ -224,26 +224,55 @@ function setFiltro(filtro, btn) {
 //   NOVA ROTA — DESTINOS
 // ═══════════════════════════════════════════
 
-// Adiciona um novo campo de destino na lista
+// Adiciona um novo card de destino na lista
 function addDestino() {
   const lista = document.getElementById('lista-destinos');
-  const num = lista.querySelectorAll('.destino-item').length + 1;
+  const num = lista.querySelectorAll('.destino-card').length + 1;
   const div = document.createElement('div');
-  div.className = 'destino-item';
+  div.className = 'destino-card';
   div.innerHTML = `
-    <span class="destino-num">${num}</span>
-    <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
-      <input type="text" class="form-input destino-input" placeholder="Endereço ${num}" />
-      <input type="text" class="form-input destinatario-input" placeholder="Nome do destinatário" />
-      <input type="text" class="form-input telefone-input" placeholder="Telefone (opcional)" />
+    <div class="destino-card-header" onclick="toggleDestino(this)">
+      <span class="destino-num">${num}</span>
+      <div class="destino-card-info">
+        <div class="destino-card-titulo">Endereço ${num}</div>
+        <div class="destino-card-sub">Clique para preencher</div>
+      </div>
+      <span class="destino-card-toggle">∨</span>
     </div>
-    <button class="btn-remove" onclick="removeDestino(this)">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M2 4h10M5 4V3a1 1 0 0 1 2 0v1M9 4V3a1 1 0 0 0-2 0v1M5 7v4M9 7v4M3 4l.7 7.3A1 1 0 0 0 4.7 12h4.6a1 1 0 0 0 1-.7L11 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-    </button>`;
+    <div class="destino-card-body aberto">
+      <div>
+        <div class="destino-card-label">Endereço</div>
+        <input type="text" class="form-input destino-input" placeholder="Rua, número — Erechim, RS" oninput="atualizarSubtitulo(this)" />
+      </div>
+      <div>
+        <div class="destino-card-label">Nome do destinatário</div>
+        <input type="text" class="form-input destinatario-input" placeholder="João da Silva" />
+      </div>
+      <div>
+        <div class="destino-card-label">Telefone (opcional)</div>
+        <input type="text" class="form-input telefone-input" placeholder="(54) 99999-9999" />
+      </div>
+      <button class="btn-remover-destino" onclick="removeDestino(this)">
+        🗑 Remover este endereço
+      </button>
+    </div>`;
   lista.appendChild(div);
   atualizarContadorDestinos();
+}
+
+// Abre ou fecha o card de destino
+function toggleDestino(header) {
+  const body = header.nextElementSibling;
+  const toggle = header.querySelector('.destino-card-toggle');
+  body.classList.toggle('aberto');
+  toggle.classList.toggle('aberto');
+}
+
+// Atualiza o subtítulo do card com o endereço digitado
+function atualizarSubtitulo(input) {
+  const card = input.closest('.destino-card');
+  const sub = card.querySelector('.destino-card-sub');
+  sub.textContent = input.value || 'Clique para preencher';
 }
 
 // Remove um destino da lista
@@ -265,9 +294,10 @@ function removeDestino(btn) {
 
 // Reordena os números dos destinos após remoção
 function reordenarDestinos() {
-  document.querySelectorAll('.destino-item').forEach((item, i) => {
-    item.querySelector('.destino-num').textContent = i + 1;
-    item.querySelector('.destino-input').placeholder = `Endereço ${i + 1}`;
+  document.querySelectorAll('.destino-card').forEach((card, i) => {
+    card.querySelector('.destino-num').textContent = i + 1;
+    card.querySelector('.destino-card-titulo').textContent = `Endereço ${i + 1}`;
+    card.querySelector('.destino-input').placeholder = `Rua, número — Erechim, RS`;
   });
 }
 
