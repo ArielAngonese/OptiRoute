@@ -386,13 +386,14 @@ async function calcularRota() {
     const rotaData = await resRota.json();
 
     rotaAtual = {
-      nome,
-      origem,
-      destinos: pontos.map(p => p.endereco),
-      route: rotaData.route,
-      distance_km: rotaData.distance_km,
-      estimated_time_minutes: rotaData.estimated_time_minutes
-    };
+  nome,
+  origem,
+  destinos: pontos.map(p => p.endereco),
+  coordenadas: pontosCoords.map(c => [c.lat, c.lon]),
+  route: rotaData.route,
+  distance_km: rotaData.distance_km,
+  estimated_time_minutes: rotaData.estimated_time_minutes
+};
 
   } catch (e) {
     alert('Erro ao calcular rota: ' + e.message);
@@ -510,15 +511,14 @@ function abrirMapa(rota) {
       .bindPopup('🚀 Partida: ' + rota.origem)
       .addTo(mapInstance);
 
-    // Marcador para cada ponto de entrega
-    rota.destinos.forEach((d, i) => {
-      const icon = i === rota.destinos.length - 1 ? iconDestino : iconParada;
-      const coordIndex = Math.round((i + 1) * (coords.length - 1) / rota.destinos.length);
-      const coord = coords[coordIndex] || coords[coords.length - 1];
-      L.marker(coord, { icon })
-        .bindPopup(`📦 Parada ${i + 1}: ${d}`)
-        .addTo(mapInstance);
-    });
+    // Marcador para cada ponto de entrega usando coordenadas reais
+rota.destinos.forEach((d, i) => {
+  const icon = i === rota.destinos.length - 1 ? iconDestino : iconParada;
+  const coord = rota.coordenadas ? rota.coordenadas[i] : coords[coords.length - 1];
+  L.marker(coord, { icon })
+    .bindPopup(`📦 Parada ${i + 1}: ${d}`)
+    .addTo(mapInstance);
+});
 
     // Ajusta o zoom para mostrar toda a rota
     mapInstance.fitBounds(L.polyline(coords).getBounds(), { padding: [40, 40] });
