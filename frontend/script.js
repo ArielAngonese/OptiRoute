@@ -61,8 +61,7 @@ async function handleLogin() {
     return;
   }
 
-  try {
-    // Chama a rota POST /login do backend de verdade
+try {
     const res = await fetch(`${API_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -76,8 +75,8 @@ async function handleLogin() {
       return;
     }
     
-    // Salva o usuário logado com os dados reais do backend
     currentUser = { id: data.user_id, nome: data.name, email: data.email };
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
     showPage('page-app');
     showApp('dashboard');
 
@@ -575,7 +574,22 @@ function dadosExemplo() {
 //   INICIALIZAÇÃO
 // ═══════════════════════════════════════════
 
+// Faz logout do usuário e volta para a tela de login
+function sair() {
+  localStorage.removeItem('currentUser');
+  currentUser = null;
+  showPage('page-login');
+}
+
 // Executa quando a página termina de carregar
 document.addEventListener('DOMContentLoaded', () => {
   atualizarContadorDestinos();
+
+  // Recupera o usuário salvo ao carregar a página
+  const savedUser = localStorage.getItem('currentUser');
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    showPage('page-app');
+    showApp('dashboard');
+  }
 });
