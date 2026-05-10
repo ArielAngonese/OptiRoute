@@ -10,7 +10,8 @@ from backend.database import (
     get_delivery_by_id,
     get_recipient_by_phone,
     get_user_by_email, 
-    insert_delivery, 
+    insert_delivery,
+    insert_delivery_point, 
     insert_address, 
     update_delivery_route, 
     insert_user, 
@@ -26,6 +27,7 @@ CORS(app)
 @app.route('/')
 def index():
     return app.send_static_file('index.html')
+
 # ================================
 # Rotas de ENTREGAS
 # ================================
@@ -58,16 +60,19 @@ def create_delivery():
 
         if not data:
             return jsonify({"erro": "Corpo da requisição inválido"}), 400
-        
+
         required_fields = [
             "origin_street", "origin_number", "origin_city", "origin_lat", "origin_lng",
-            "destination_street", "destination_number", "destination_city", "destination_lat", "destination_lng",
-            "date", "user_id", "recipient_name"
+            "date", "user_id", "points"
         ]
         for field in required_fields:
             if field not in data:
                 return jsonify({"erro": f"Campo obrigatório ausente: {field}"}), 400
 
+        if not data["points"] or len(data["points"]) == 0:
+            return jsonify({"erro": "Adicione pelo menos um ponto de entrega"}), 400
+
+        # Cria ou reutiliza o endereço de origem
         existing_origin = get_address_by_coords(data["origin_lat"], data["origin_lng"])
         if existing_origin is not None:
             id_origin_address = existing_origin["id_endereco"]
@@ -80,38 +85,46 @@ def create_delivery():
                 data["origin_lng"]
             )
 
-        existing_destination = get_address_by_coords(data["destination_lat"], data["destination_lng"])
-        if existing_destination is not None:
-            id_destination_address = existing_destination["id_endereco"]
-        else:
-            id_destination_address = insert_address(
-                data["destination_street"],
-                data["destination_number"],
-                data["destination_city"],
-                data["destination_lat"],
-                data["destination_lng"]
-            )
-
-        existing_recipient = get_recipient_by_phone(data.get("recipient_phone"))
-        if existing_recipient is not None:
-            id_destinatario = existing_recipient["id_destinatario"]
-        else:
-            id_destinatario = insert_recipient(
-                data["recipient_name"],
-                data.get("recipient_phone")
-    )
-
+        # Cria a entrega
         id_delivery = insert_delivery(
             status="pendente",
             data=data["date"],
             id_usuario=data["user_id"],
-            id_destinatario=id_destinatario,
-            id_endereco_origem=id_origin_address,
-            id_endereco_destino=id_destination_address
+            id_endereco_origem=id_origin_address
         )
 
+        # Cria os pontos de entrega
+        for i, point in enumerate(data["points"]):
+            existing_destination = get_address_by_coords(point["destination_lat"], point["destination_lng"])
+            if existing_destination is not None:
+                id_destination_address = existing_destination["id_endereco"]
+            else:
+                id_destination_address = insert_address(
+                    point["destination_street"],
+                    point.get("destination_number", "S/N"),
+                    point["destination_city"],
+                    point["destination_lat"],
+                    point["destination_lng"]
+                )
+
+            existing_recipient = get_recipient_by_phone(point.get("recipient_phone"))
+            if existing_recipient is not None:
+                id_destinatario = existing_recipient["id_destinatario"]
+            else:
+                id_destinatario = insert_recipient(
+                    point["recipient_name"],
+                    point.get("recipient_phone")
+                )
+
+            insert_delivery_point(
+                id_delivery,
+                id_destinatario,
+                id_destination_address,
+                ordem=i + 1
+            )
+
         return jsonify({"delivery_id": id_delivery}), 201
-    
+
     except Exception as e:
         return jsonify({"erro": f"Erro ao criar entrega: {str(e)}"}), 500
 
