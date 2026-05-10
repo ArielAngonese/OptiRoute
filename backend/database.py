@@ -179,20 +179,14 @@ def get_distributor_by_id(id_distribuidora):
 # ─────────────────────────────────────────────
 
 # Insere uma nova entrega e retorna seu ID
-def insert_delivery(status, data, id_usuario, id_destinatario,
-                    id_endereco_origem, id_endereco_destino,
-                    distancia=None, tempo_estimado=None):
+def insert_delivery(status, data, id_usuario, id_endereco_origem, distancia=None, tempo_estimado=None):
     conn = connect()
     cursor = conn.cursor()
     query = """
-        INSERT INTO ENTREGA (status, data, distancia, tempo_estimado,
-                             id_usuario, id_destinatario,
-                             id_endereco_origem, id_endereco_destino)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO ENTREGA (status, data, distancia, tempo_estimado, id_usuario, id_endereco_origem)
+        VALUES (%s, %s, %s, %s, %s, %s)
     """
-    cursor.execute(query, (status, data, distancia, tempo_estimado,
-                           id_usuario, id_destinatario,
-                           id_endereco_origem, id_endereco_destino))
+    cursor.execute(query, (status, data, distancia, tempo_estimado, id_usuario, id_endereco_origem))
     conn.commit()
     id_entrega = cursor.lastrowid
     cursor.close()
