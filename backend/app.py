@@ -36,7 +36,8 @@ def index():
 @app.route("/deliveries", methods=["GET"])
 def get_deliveries():
     try:
-        deliveries = get_all_deliveries()
+        user_id = request.args.get('user_id')
+        deliveries = get_all_deliveries(user_id)
         return jsonify(deliveries)
     except Exception as e:
         return jsonify({"erro": f"Erro ao buscar entregas: {str(e)}"}), 500
