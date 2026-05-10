@@ -314,56 +314,97 @@ function atualizarContadorDestinos() {
 async function calcularRota() {
   const nome = document.getElementById('rota-nome').value.trim();
   const origem = document.getElementById('rota-origem').value.trim();
-  const destinos = [...document.querySelectorAll('.destino-input')]
-    .map(i => i.value.trim())
-    .filter(v => v);
+  const data = document.getElementById('rota-data').value;
+
+  // Coleta todos os pontos de entrega
+  const cards = [...document.querySelectorAll('.destino-card')];
+  const pontos = cards.map(card => ({
+    endereco: card.querySelector('.destino-input').value.trim(),
+    destinatario: card.querySelector('.destinatario-input').value.trim(),
+    telefone: card.querySelector('.telefone-input').value.trim()
+  })).filter(p => p.endereco);
 
   if (!nome) { alert('Informe o nome da rota.'); return; }
   if (!origem) { alert('Informe o ponto de partida.'); return; }
-  if (!destinos.length) { alert('Adicione pelo menos um ponto de entrega.'); return; }
+  if (!pontos.length) { alert('Adicione pelo menos um ponto de entrega.'); return; }
+  if (pontos.some(p => !p.destinatario)) { alert('Informe o nome do destinatário em todos os pontos.'); return; }
+  if (!data) { alert('Informe a data da entrega.'); return; }
 
   const btn = document.querySelector('.btn-calcular');
   btn.textContent = 'Calculando...';
   btn.disabled = true;
 
   try {
-    // Converte os endereços em coordenadas geográficas
+    // Geocodifica origem
     const origemCoords = await geocodificar(origem);
-    const destinoCoords = await geocodificar(destinos[0]);
 
-    // Envia para a API calcular a rota usando o algoritmo de Dijkstra
-    const res = await fetch(`${API_URL}/calculate-route`, {
+    // Geocodifica todos os pontos
+    const pontosCoords = await Promise.all(pontos.map(p => geocodificar(p.endereco)));
+
+    // Formata a data para o banco
+    const dataFormatada = new Date(data).toISOString().slice(0, 19).replace('T', ' ');
+
+    // POST /deliveries — cria a entrega com todos os pontos
+    const resEntrega = await fetch(`${API_URL}/deliveries`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        origin_street: origem,
+        origin_number: "S/N",
+        origin_city: "Erechim",
+        origin_lat: origemCoords.lat,
+        origin_lng: origemCoords.lon,
+        date: dataFormatada,
+        user_id: currentUser.id,
+        points: pontos.map((p, i) => ({
+          destination_street: p.endereco,
+          destination_number: "S/N",
+          destination_city: "Erechim",
+          destination_lat: pontosCoords[i].lat,
+          destination_lng: pontosCoords[i].lon,
+          recipient_name: p.destinatario,
+          recipient_phone: p.telefone || null
+        }))
+      })
+    });
+
+    const entregaData = await resEntrega.json();
+    const deliveryId = entregaData.delivery_id;
+
+    // POST /calculate-route — calcula a rota entre todos os pontos
+    const resRota = await fetch(`${API_URL}/calculate-route`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         origin_lat: origemCoords.lat,
         origin_lng: origemCoords.lon,
-        destination_lat: destinoCoords.lat,
-        destination_lng: destinoCoords.lon
+        points: pontosCoords.map(c => ({ lat: c.lat, lng: c.lon })),
+        delivery_id: deliveryId
       })
     });
 
-    const data = await res.json();
+    const rotaData = await resRota.json();
+
     rotaAtual = {
-      nome, origem, destinos,
-      route: data.route,
-      distance_km: data.distance_km,
-      estimated_time_minutes: data.estimated_time_minutes
+      nome,
+      origem,
+      destinos: pontos.map(p => p.endereco),
+      route: rotaData.route,
+      distance_km: rotaData.distance_km,
+      estimated_time_minutes: rotaData.estimated_time_minutes
     };
 
   } catch (e) {
-    // Backend indisponível — simula uma rota
-    rotaAtual = {
-      nome, origem, destinos,
-      route: [[-27.63, -52.26], [-27.64, -52.27], [-27.65, -52.28]],
-      distance_km: (Math.random() * 15 + 5).toFixed(1),
-      estimated_time_minutes: Math.floor(Math.random() * 40 + 15)
-    };
+    alert('Erro ao calcular rota: ' + e.message);
+    btn.textContent = 'Calcular Rota Otimizada';
+    btn.disabled = false;
+    return;
   }
 
   btn.textContent = 'Calcular Rota Otimizada';
   btn.disabled = false;
 
+  entregas = [];
   abrirMapa(rotaAtual);
 }
 
