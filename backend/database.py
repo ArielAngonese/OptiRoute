@@ -297,9 +297,42 @@ def get_delivery_by_id(id_entrega):
         ORDER BY p.ordem ASC
     """
     cursor.execute(query, (id_entrega,))
-    delivery = cursor.fetchall()
+    rows = cursor.fetchall()
     cursor.close()
     conn.close()
+
+    if not rows:
+        return None
+
+    delivery = {
+        "id_entrega": rows[0]["id_entrega"],
+        "status": rows[0]["status"],
+        "data": rows[0]["data"],
+        "distancia": rows[0]["distancia"],
+        "tempo_estimado": rows[0]["tempo_estimado"],
+        "nome_usuario": rows[0]["nome_usuario"],
+        "rua_origem": rows[0]["rua_origem"],
+        "numero_origem": rows[0]["numero_origem"],
+        "cidade_origem": rows[0]["cidade_origem"],
+        "lat_origem": rows[0]["lat_origem"],
+        "lng_origem": rows[0]["lng_origem"],
+        "pontos": []
+    }
+
+    for row in rows:
+        delivery["pontos"].append({
+            "id_ponto": row["id_ponto"],
+            "ordem": row["ordem"],
+            "status_ponto": row["status_ponto"],
+            "nome_destinatario": row["nome_destinatario"],
+            "telefone": row["telefone"],
+            "rua_destino": row["rua_destino"],
+            "numero_destino": row["numero_destino"],
+            "cidade_destino": row["cidade_destino"],
+            "lat_destino": row["lat_destino"],
+            "lng_destino": row["lng_destino"]
+        })
+
     return delivery
 
 # Atualiza a rota de uma entrega 
