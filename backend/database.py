@@ -216,19 +216,21 @@ def get_all_deliveries():
         SELECT 
             e.id_entrega, e.status, e.data, e.distancia, e.tempo_estimado,
             u.nome AS nome_usuario,
-            d.nome AS nome_destinatario, d.telefone,
             orig.rua AS rua_origem, orig.numero AS numero_origem,
             orig.cidade AS cidade_origem,
             orig.latitude AS lat_origem, orig.longitude AS lng_origem,
+            p.id_ponto, p.ordem, p.status AS status_ponto,
+            d.nome AS nome_destinatario, d.telefone,
             dest.rua AS rua_destino, dest.numero AS numero_destino,
             dest.cidade AS cidade_destino,
             dest.latitude AS lat_destino, dest.longitude AS lng_destino
         FROM ENTREGA e
         JOIN USUARIO u ON e.id_usuario = u.id_usuario
-        JOIN DESTINATARIO d ON e.id_destinatario = d.id_destinatario
         JOIN ENDERECO orig ON e.id_endereco_origem = orig.id_endereco
-        JOIN ENDERECO dest ON e.id_endereco_destino = dest.id_endereco
-        ORDER BY e.data DESC
+        JOIN PONTO_ENTREGA p ON e.id_entrega = p.id_entrega
+        JOIN DESTINATARIO d ON p.id_destinatario = d.id_destinatario
+        JOIN ENDERECO dest ON p.id_endereco = dest.id_endereco
+        ORDER BY e.data DESC, p.ordem ASC
     """
     cursor.execute(query)
     deliveries = cursor.fetchall()
