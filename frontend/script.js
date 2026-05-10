@@ -529,12 +529,15 @@ rota.destinos.forEach((d, i) => {
 function abrirMapaEntrega(entrega) {
   if (!entrega) return;
 
+  const pontos = entrega.pontos || [];
+
   const rota = {
     nome: entrega.nome || `Entrega #${entrega.id_entrega}`,
     origem: `${entrega.rua_origem}, ${entrega.numero_origem} — ${entrega.cidade_origem}`,
-    destinos: [`${entrega.rua_destino}, ${entrega.numero_destino} — ${entrega.cidade_destino}`],
+    destinos: pontos.map(p => `${p.rua_destino}, ${p.numero_destino} — ${p.cidade_destino}`),
+    coordenadas: pontos.map(p => [p.lat_destino, p.lng_destino]),
     route: entrega.lat_origem
-      ? [[entrega.lat_origem, entrega.lng_origem], [entrega.lat_destino, entrega.lng_destino]]
+      ? [[entrega.lat_origem, entrega.lng_origem], ...pontos.map(p => [p.lat_destino, p.lng_destino])]
       : [[-27.63, -52.26], [-27.65, -52.28]],
     distance_km: entrega.distancia || '—',
     estimated_time_minutes: entrega.tempo_estimado || '—'
@@ -583,12 +586,14 @@ function rotaItemHTML(e) {
   const km = e.distancia ? e.distancia + ' km' : '—';
   const min = e.tempo_estimado ? e.tempo_estimado + ' min' : '—';
   const nome = e.nome || `Entrega #${e.id_entrega}`;
+  const pontos = e.pontos || [];
+  const numPontos = pontos.length;
   return `
     <div class="rota-item" onclick='abrirMapaEntrega(${JSON.stringify(e)})'>
     <div class="rota-icon">${rotaIconSVG(e.status)}</div>
       <div class="rota-info">
         <div class="rota-nome">${nome}</div>
-        <div class="rota-meta">${km} · ${min}</div>
+        <div class="rota-meta">${km} · ${min} · ${numPontos} ponto(s)</div>
       </div>
       <div class="rota-right">
         ${badgeHTML(e.status)}
@@ -603,6 +608,9 @@ function historicoItemHTML(e) {
   const min = e.tempo_estimado ? e.tempo_estimado + ' min' : '—';
   const nome = e.nome || `Entrega #${e.id_entrega}`;
   const data = e.data ? new Date(e.data).toLocaleDateString('pt-BR') : '—';
+  const pontos = e.pontos || [];
+  const numPontos = pontos.length;
+  const primeiroPonto = pontos[0] ? pontos[0].rua_destino : '—';
   return `
     <div class="historico-item" onclick='abrirMapaEntrega(${JSON.stringify(e)})'>
     <div class="hist-icon">${rotaIconSVG(e.status)}</div>
@@ -612,12 +620,14 @@ function historicoItemHTML(e) {
           <span>📍 ${e.rua_origem || '—'}</span>
           <span>↔ ${km}</span>
           <span>⏱ ${min}</span>
+          <span>📦 ${numPontos} ponto(s)</span>
           <span>📅 ${data}</span>
         </div>
       </div>
       <span class="arrow-btn">→</span>
     </div>`;
 }
+
 // ═══════════════════════════════════════════
 //   DADOS DE EXEMPLO
 // ═══════════════════════════════════════════
