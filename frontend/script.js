@@ -61,7 +61,8 @@ async function handleLogin() {
     return;
   }
 
-try {
+  try {
+    // Chama a rota POST /login do backend de verdade
     const res = await fetch(`${API_URL}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -75,8 +76,8 @@ try {
       return;
     }
     
+    // Salva o usuário logado com os dados reais do backend
     currentUser = { id: data.user_id, nome: data.name, email: data.email };
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
     showPage('page-app');
     showApp('dashboard');
 
@@ -103,7 +104,7 @@ const confirmar = document.getElementById('reg-confirm').value;
   if (senha !== confirmar) { msg.textContent = 'As senhas não coincidem.'; return; }
 
   try {
-    // Envia os dados para a API de cadastro
+    // Envia os dados para a API de cadastro  
     const res = await fetch(`${API_URL}/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -129,8 +130,8 @@ const confirmar = document.getElementById('reg-confirm').value;
 // Carrega os dados do dashboard — data atual e estatísticas
 async function carregarDashboard() {
   // Exibe a data atual formatada
-  const dias = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
-  const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const dias = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const hoje = new Date();
   document.getElementById('dashboard-date').textContent =
     `${dias[hoje.getDay()]}, ${hoje.getDate()} de ${meses[hoje.getMonth()]}`;
@@ -171,15 +172,16 @@ async function carregarDashboard() {
 
 // Carrega as entregas e exibe no histórico
 async function carregarHistorico() {
+  if (!entregas.length) {
     try {
       // Busca as entregas na API
       const res = await fetch(`${API_URL}/deliveries`);
       entregas = await res.json();
-      entregas.sort((a, b) => b.id_entrega - a.id_entrega);
     } catch (e) {
       // Backend indisponível — usa dados de exemplo
       entregas = dadosExemplo();
     }
+  }
   renderHistorico();
 }
 
@@ -222,44 +224,80 @@ function setFiltro(filtro, btn) {
 //   NOVA ROTA — DESTINOS
 // ═══════════════════════════════════════════
 
-// Adiciona um novo campo de destino na lista
+// Adiciona um novo card de destino na lista
 function addDestino() {
   const lista = document.getElementById('lista-destinos');
-  const num = lista.querySelectorAll('.destino-item').length + 1;
+  const num = lista.querySelectorAll('.destino-card').length + 1;
   const div = document.createElement('div');
-  div.className = 'destino-item';
+  div.className = 'destino-card';
   div.innerHTML = `
-    <span class="destino-num">${num}</span>
-    <input type="text" class="form-input destino-input" placeholder="Endereço ${num}" />
-    <button class="btn-remove" onclick="removeDestino(this)">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M2 4h10M5 4V3a1 1 0 0 1 2 0v1M9 4V3a1 1 0 0 0-2 0v1M5 7v4M9 7v4M3 4l.7 7.3A1 1 0 0 0 4.7 12h4.6a1 1 0 0 0 1-.7L11 4"
-          stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-    </button>`;
+    <div class="destino-card-header" onclick="toggleDestino(this)">
+      <span class="destino-num">${num}</span>
+      <div class="destino-card-info">
+        <div class="destino-card-titulo">Endereço ${num}</div>
+        <div class="destino-card-sub">Clique para preencher</div>
+      </div>
+      <span class="destino-card-toggle">∨</span>
+    </div>
+    <div class="destino-card-body aberto">
+      <div>
+        <div class="destino-card-label">Endereço</div>
+        <input type="text" class="form-input destino-input" placeholder="Rua, número — Erechim, RS" oninput="atualizarSubtitulo(this)" />
+      </div>
+      <div>
+        <div class="destino-card-label">Nome do destinatário</div>
+        <input type="text" class="form-input destinatario-input" placeholder="João da Silva" />
+      </div>
+      <div>
+        <div class="destino-card-label">Telefone (opcional)</div>
+        <input type="text" class="form-input telefone-input" placeholder="(54) 99999-9999" />
+      </div>
+      <button class="btn-remover-destino" onclick="removeDestino(this)">
+        🗑 Remover este endereço
+      </button>
+    </div>`;
   lista.appendChild(div);
   atualizarContadorDestinos();
 }
 
+// Abre ou fecha o card de destino
+function toggleDestino(header) {
+  const body = header.nextElementSibling;
+  const toggle = header.querySelector('.destino-card-toggle');
+  body.classList.toggle('aberto');
+  toggle.classList.toggle('aberto');
+}
+
+// Atualiza o subtítulo do card com o endereço digitado
+function atualizarSubtitulo(input) {
+  const card = input.closest('.destino-card');
+  const sub = card.querySelector('.destino-card-sub');
+  sub.textContent = input.value || 'Clique para preencher';
+}
+
 // Remove um destino da lista
 function removeDestino(btn) {
-  const item = btn.closest('.destino-item');
+  const item = btn.closest('.destino-card');
   const lista = document.getElementById('lista-destinos');
-  if (lista.querySelectorAll('.destino-item').length > 1) {
+  if (lista.querySelectorAll('.destino-card').length > 1) {
     item.remove();
     reordenarDestinos();
   } else {
-    // Mantém pelo menos um campo — só limpa o valor
+    // Mantém pelo menos um card — só limpa os valores
     item.querySelector('.destino-input').value = '';
+    item.querySelector('.destinatario-input').value = '';
+    item.querySelector('.telefone-input').value = '';
+    item.querySelector('.destino-card-sub').textContent = 'Clique para preencher';
   }
   atualizarContadorDestinos();
 }
 
 // Reordena os números dos destinos após remoção
 function reordenarDestinos() {
-  document.querySelectorAll('.destino-item').forEach((item, i) => {
-    item.querySelector('.destino-num').textContent = i + 1;
-    item.querySelector('.destino-input').placeholder = `Endereço ${i + 1}`;
+  document.querySelectorAll('.destino-card').forEach((card, i) => {
+    card.querySelector('.destino-num').textContent = i + 1;
+    card.querySelector('.destino-card-titulo').textContent = `Endereço ${i + 1}`;
+    card.querySelector('.destino-input').placeholder = `Rua, número — Erechim, RS`;
   });
 }
 
@@ -279,88 +317,53 @@ async function calcularRota() {
   const destinos = [...document.querySelectorAll('.destino-input')]
     .map(i => i.value.trim())
     .filter(v => v);
-  const destinatario = document.getElementById('rota-destinatario').value.trim();
-  const telefone = document.getElementById('rota-telefone').value.trim();
-  const data = document.getElementById('rota-data').value;
 
   if (!nome) { alert('Informe o nome da rota.'); return; }
   if (!origem) { alert('Informe o ponto de partida.'); return; }
   if (!destinos.length) { alert('Adicione pelo menos um ponto de entrega.'); return; }
-  if (!destinatario) { alert('Informe o nome do destinatário.'); return; }
-  if (!data) { alert('Informe a data da entrega.'); return; }
 
   const btn = document.querySelector('.btn-calcular');
   btn.textContent = 'Calculando...';
   btn.disabled = true;
 
   try {
-    // Geocodifica origem e destino
+    // Converte os endereços em coordenadas geográficas
     const origemCoords = await geocodificar(origem);
     const destinoCoords = await geocodificar(destinos[0]);
 
-    // Formata a data para o formato do banco
-    const dataFormatada = new Date(data).toISOString().slice(0, 19).replace('T', ' ');
-
-    // Cria a entrega no banco
-    const resEntrega = await fetch(`${API_URL}/deliveries`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        origin_street: origem,
-        origin_number: "S/N",
-        origin_city: "Erechim",
-        origin_lat: origemCoords.lat,
-        origin_lng: origemCoords.lon,
-        destination_street: destinos[0],
-        destination_number: "S/N",
-        destination_city: "Erechim",
-        destination_lat: destinoCoords.lat,
-        destination_lng: destinoCoords.lon,
-        date: dataFormatada,
-        user_id: currentUser.id,
-        recipient_name: destinatario,
-        recipient_phone: telefone || null
-      })
-    });
-
-    const entregaData = await resEntrega.json();
-    const deliveryId = entregaData.delivery_id;
-
-    // Calcula a rota
-    const resRota = await fetch(`${API_URL}/calculate-route`, {
+    // Envia para a API calcular a rota usando o algoritmo de Dijkstra
+    const res = await fetch(`${API_URL}/calculate-route`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         origin_lat: origemCoords.lat,
         origin_lng: origemCoords.lon,
         destination_lat: destinoCoords.lat,
-        destination_lng: destinoCoords.lon,
-        delivery_id: deliveryId
+        destination_lng: destinoCoords.lon
       })
     });
 
-    const rotaData = await resRota.json();
-
+    const data = await res.json();
     rotaAtual = {
-      nome,
-      origem,
-      destinos,
-      route: rotaData.route,
-      distance_km: rotaData.distance_km,
-      estimated_time_minutes: rotaData.estimated_time_minutes
+      nome, origem, destinos,
+      route: data.route,
+      distance_km: data.distance_km,
+      estimated_time_minutes: data.estimated_time_minutes
     };
 
   } catch (e) {
-    alert('Erro ao calcular rota: ' + e.message);
-    btn.textContent = 'Calcular Rota Otimizada';
-    btn.disabled = false;
-    return;
+    // Backend indisponível — simula uma rota
+    rotaAtual = {
+      nome, origem, destinos,
+      route: [[-27.63, -52.26], [-27.64, -52.27], [-27.65, -52.28]],
+      distance_km: (Math.random() * 15 + 5).toFixed(1),
+      estimated_time_minutes: Math.floor(Math.random() * 40 + 15)
+    };
   }
 
   btn.textContent = 'Calcular Rota Otimizada';
   btn.disabled = false;
 
-  entregas = []; // Força recarregar o histórico na próxima vez
   abrirMapa(rotaAtual);
 }
 
@@ -574,22 +577,7 @@ function dadosExemplo() {
 //   INICIALIZAÇÃO
 // ═══════════════════════════════════════════
 
-// Faz logout do usuário e volta para a tela de login
-function sair() {
-  localStorage.removeItem('currentUser');
-  currentUser = null;
-  showPage('page-login');
-}
-
 // Executa quando a página termina de carregar
 document.addEventListener('DOMContentLoaded', () => {
   atualizarContadorDestinos();
-
-  // Recupera o usuário salvo ao carregar a página
-  const savedUser = localStorage.getItem('currentUser');
-  if (savedUser) {
-    currentUser = JSON.parse(savedUser);
-    showPage('page-app');
-    showApp('dashboard');
-  }
 });
