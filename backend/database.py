@@ -193,6 +193,21 @@ def insert_delivery(status, data, id_usuario, id_endereco_origem, distancia=None
     conn.close()
     return id_entrega
 
+# Insere um ponto de entrega (destinatário + endereço) para uma entrega específica
+def insert_delivery_point(id_entrega, id_destinatario, id_endereco, ordem, status="pendente"):
+    conn = connect()
+    cursor = conn.cursor()
+    query = """
+        INSERT INTO PONTO_ENTREGA (id_entrega, id_destinatario, id_endereco, ordem, status)
+        VALUES (%s, %s, %s, %s, %s)
+    """
+    cursor.execute(query, (id_entrega, id_destinatario, id_endereco, ordem, status))
+    conn.commit()
+    id_ponto = cursor.lastrowid
+    cursor.close()
+    conn.close()
+    return id_ponto
+
 # Busca todas as entregas e retorna uma lista de detalhes
 def get_all_deliveries():
     conn = connect()
