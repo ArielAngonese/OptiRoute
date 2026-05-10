@@ -281,48 +281,82 @@ async function calcularRota() {
   const destinos = [...document.querySelectorAll('.destino-input')]
     .map(i => i.value.trim())
     .filter(v => v);
+  const destinatario = document.getElementById('rota-destinatario').value.trim();
+  const telefone = document.getElementById('rota-telefone').value.trim();
+  const data = document.getElementById('rota-data').value;
 
   if (!nome) { alert('Informe o nome da rota.'); return; }
   if (!origem) { alert('Informe o ponto de partida.'); return; }
   if (!destinos.length) { alert('Adicione pelo menos um ponto de entrega.'); return; }
+  if (!destinatario) { alert('Informe o nome do destinatário.'); return; }
+  if (!data) { alert('Informe a data da entrega.'); return; }
 
   const btn = document.querySelector('.btn-calcular');
   btn.textContent = 'Calculando...';
   btn.disabled = true;
 
   try {
-    // Converte os endereços em coordenadas geográficas
+    // Geocodifica origem e destino
     const origemCoords = await geocodificar(origem);
     const destinoCoords = await geocodificar(destinos[0]);
 
-    // Envia para a API calcular a rota usando o algoritmo de Dijkstra
-    const res = await fetch(`${API_URL}/calculate-route`, {
+    // Formata a data para o formato do banco
+    const dataFormatada = new Date(data).toISOString().slice(0, 19).replace('T', ' ');
+
+    // Cria a entrega no banco
+    const resEntrega = await fetch(`${API_URL}/deliveries`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        origin_street: origem,
+        origin_number: "S/N",
+        origin_city: "Erechim",
+        origin_lat: origemCoords.lat,
+        origin_lng: origemCoords.lon,
+        destination_street: destinos[0],
+        destination_number: "S/N",
+        destination_city: "Erechim",
+        destination_lat: destinoCoords.lat,
+        destination_lng: destinoCoords.lon,
+        date: dataFormatada,
+        user_id: currentUser.id,
+        recipient_name: destinatario,
+        recipient_phone: telefone || null
+      })
+    });
+
+    const entregaData = await resEntrega.json();
+    const deliveryId = entregaData.delivery_id;
+
+    // Calcula a rota
+    const resRota = await fetch(`${API_URL}/calculate-route`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         origin_lat: origemCoords.lat,
         origin_lng: origemCoords.lon,
         destination_lat: destinoCoords.lat,
-        destination_lng: destinoCoords.lon
+        destination_lng: destinoCoords.lon,
+        delivery_id: deliveryId
       })
     });
 
-    const data = await res.json();
+    const rotaData = await resRota.json();
+
     rotaAtual = {
-      nome, origem, destinos,
-      route: data.route,
-      distance_km: data.distance_km,
-      estimated_time_minutes: data.estimated_time_minutes
+      nome,
+      origem,
+      destinos,
+      route: rotaData.route,
+      distance_km: rotaData.distance_km,
+      estimated_time_minutes: rotaData.estimated_time_minutes
     };
 
   } catch (e) {
-    // Backend indisponível — simula uma rota
-    rotaAtual = {
-      nome, origem, destinos,
-      route: [[-27.63, -52.26], [-27.64, -52.27], [-27.65, -52.28]],
-      distance_km: (Math.random() * 15 + 5).toFixed(1),
-      estimated_time_minutes: Math.floor(Math.random() * 40 + 15)
-    };
+    alert('Erro ao calcular rota: ' + e.message);
+    btn.textContent = 'Calcular Rota Otimizada';
+    btn.disabled = false;
+    return;
   }
 
   btn.textContent = 'Calcular Rota Otimizada';

@@ -741,6 +741,34 @@
                 + Adicionar ponto de entrega
               </button>
             </div>
+            
+            <!-- Destinatário -->
+            <div class="form-card">
+              <label class="form-label">Destinatário</label>
+                <input
+                  type="text"
+                  id="rota-destinatario"
+                  class="form-input"
+                  placeholder="Nome do destinatário"
+                />
+                <input
+                  type="text"
+                  id="rota-telefone"
+                  class="form-input"
+                  placeholder="Telefone (opcional)"
+                  style="margin-top: 8px"
+                />
+            </div>
+
+            <!-- Data -->
+            <div class="form-card">
+              <label class="form-label">Data da Entrega</label>
+                <input
+                  type="datetime-local"
+                  id="rota-data"
+                  class="form-input"
+                />
+            </div>
 
             <!-- Botão calcular rota -->
             <button class="btn-calcular" onclick="calcularRota()">
