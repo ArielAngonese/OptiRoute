@@ -209,7 +209,7 @@ def insert_delivery_point(id_entrega, id_destinatario, id_endereco, ordem, statu
     return id_ponto
 
 # Busca todas as entregas e retorna uma lista de detalhes
-def get_all_deliveries():
+def get_all_deliveries(user_id=None):
     conn = connect()
     cursor = conn.cursor(dictionary=True)
     query = """
@@ -230,14 +230,19 @@ def get_all_deliveries():
         JOIN PONTO_ENTREGA p ON e.id_entrega = p.id_entrega
         JOIN DESTINATARIO d ON p.id_destinatario = d.id_destinatario
         JOIN ENDERECO dest ON p.id_endereco = dest.id_endereco
-        ORDER BY e.data DESC, p.ordem ASC
     """
-    cursor.execute(query)
+
+    if user_id:
+        query += " WHERE e.id_usuario = %s ORDER BY e.data DESC, p.ordem ASC"
+        cursor.execute(query, (user_id,))
+    else:
+        query += " ORDER BY e.data DESC, p.ordem ASC"
+        cursor.execute(query)
+
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
 
-    # Agrupa os pontos dentro de cada entrega
     deliveries = {}
     for row in rows:
         id_entrega = row["id_entrega"]
