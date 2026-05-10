@@ -698,79 +698,97 @@
 
               <!-- Lista de destinos -->
               <div id="lista-destinos">
-                <div class="destino-item">
-                  <span class="destino-num">1</span>
+                <div class="destino-card">
                   <div
-                    style="
-                      flex: 1;
-                      display: flex;
-                      flex-direction: column;
-                      gap: 6px;
-                    "
+                    class="destino-card-header"
+                    onclick="toggleDestino(this)"
                   >
-                    <input
-                      type="text"
-                      class="form-input destino-input"
-                      placeholder="Endereço 1"
-                    />
-                    <input
-                      type="text"
-                      class="form-input destinatario-input"
-                      placeholder="Nome do destinatário"
-                    />
-                    <input
-                      type="text"
-                      class="form-input telefone-input"
-                      placeholder="Telefone (opcional)"
-                    />
+                    <span class="destino-num">1</span>
+                    <div class="destino-card-info">
+                      <div class="destino-card-titulo">Endereço 1</div>
+                      <div class="destino-card-sub">Clique para preencher</div>
+                    </div>
+                    <span class="destino-card-toggle">∨</span>
                   </div>
-                  <button class="btn-remove" onclick="removeDestino(this)">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <path
-                        d="M2 4h10M5 4V3a1 1 0 0 1 2 0v1M9 4V3a1 1 0 0 0-2 0v1M5 7v4M9 7v4M3 4l.7 7.3A1 1 0 0 0 4.7 12h4.6a1 1 0 0 0 1-.7L11 4"
-                        stroke="currentColor"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
+                  <div class="destino-card-body aberto">
+                    <div>
+                      <div class="destino-card-label">Endereço</div>
+                      <input
+                        type="text"
+                        class="form-input destino-input"
+                        placeholder="Rua, número — Erechim, RS"
+                        oninput="atualizarSubtitulo(this)"
                       />
-                    </svg>
-                  </button>
+                    </div>
+                    <div>
+                      <div class="destino-card-label">Nome do destinatário</div>
+                      <input
+                        type="text"
+                        class="form-input destinatario-input"
+                        placeholder="João da Silva"
+                      />
+                    </div>
+                    <div>
+                      <div class="destino-card-label">Telefone (opcional)</div>
+                      <input
+                        type="text"
+                        class="form-input telefone-input"
+                        placeholder="(54) 99999-9999"
+                      />
+                    </div>
+                    <button
+                      class="btn-remover-destino"
+                      onclick="removeDestino(this)"
+                    >
+                      🗑 Remover este endereço
+                    </button>
+                  </div>
                 </div>
-                <div class="destino-item">
-                  <span class="destino-num">2</span>
+                <div class="destino-card">
                   <div
-                    style="
-                      flex: 1;
-                      display: flex;
-                      flex-direction: column;
-                      gap: 6px;
-                    "
+                    class="destino-card-header"
+                    onclick="toggleDestino(this)"
                   >
-                    <input
-                      type="text"
-                      class="form-input destino-input"
-                      placeholder="Endereço 2"
-                    />
-                    <input
-                      type="text"
-                      class="form-input destinatario-input"
-                      placeholder="Nome do destinatário"
-                    />
-                    <input
-                      type="text"
-                      class="form-input telefone-input"
-                      placeholder="Telefone (opcional)"
-                    />
+                    <span class="destino-num">2</span>
+                    <div class="destino-card-info">
+                      <div class="destino-card-titulo">Endereço 2</div>
+                      <div class="destino-card-sub">Clique para preencher</div>
+                    </div>
+                    <span class="destino-card-toggle">∨</span>
                   </div>
-                  <button class="btn-remove" onclick="removeDestino(this)">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <path
-                        d="M2 4h10M5 4V3a1 1 0 0 1 2 0v1M9 4V3a1 1 0 0 0-2 0v1M5 7v4M9 7v4M3 4l.7 7.3A1 1 0 0 0 4.7 12h4.6a1 1 0 0 0 1-.7L11 4"
-                        stroke="currentColor"
-                        stroke-width="1.2"
-                        stroke-linecap="round"
+                  <div class="destino-card-body aberto">
+                    <div>
+                      <div class="destino-card-label">Endereço</div>
+                      <input
+                        type="text"
+                        class="form-input destino-input"
+                        placeholder="Rua, número — Erechim, RS"
+                        oninput="atualizarSubtitulo(this)"
                       />
-                    </svg>
-                  </button>
+                    </div>
+                    <div>
+                      <div class="destino-card-label">Nome do destinatário</div>
+                      <input
+                        type="text"
+                        class="form-input destinatario-input"
+                        placeholder="João da Silva"
+                      />
+                    </div>
+                    <div>
+                      <div class="destino-card-label">Telefone (opcional)</div>
+                      <input
+                        type="text"
+                        class="form-input telefone-input"
+                        placeholder="(54) 99999-9999"
+                      />
+                    </div>
+                    <button
+                      class="btn-remover-destino"
+                      onclick="removeDestino(this)"
+                    >
+                      🗑 Remover este endereço
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -778,24 +796,6 @@
               <button class="btn-add-destino" onclick="addDestino()">
                 + Adicionar ponto de entrega
               </button>
-            </div>
-
-            <!-- Destinatário -->
-            <div class="form-card">
-              <label class="form-label">Destinatário</label>
-              <input
-                type="text"
-                id="rota-destinatario"
-                class="form-input"
-                placeholder="Nome do destinatário"
-              />
-              <input
-                type="text"
-                id="rota-telefone"
-                class="form-input"
-                placeholder="Telefone (opcional)"
-                style="margin-top: 8px"
-              />
             </div>
 
             <!-- Data -->

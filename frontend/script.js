@@ -248,14 +248,17 @@ function addDestino() {
 
 // Remove um destino da lista
 function removeDestino(btn) {
-  const item = btn.closest('.destino-item');
+  const item = btn.closest('.destino-card');
   const lista = document.getElementById('lista-destinos');
-  if (lista.querySelectorAll('.destino-item').length > 1) {
+  if (lista.querySelectorAll('.destino-card').length > 1) {
     item.remove();
     reordenarDestinos();
   } else {
-    // Mantém pelo menos um campo — só limpa o valor
+    // Mantém pelo menos um card — só limpa os valores
     item.querySelector('.destino-input').value = '';
+    item.querySelector('.destinatario-input').value = '';
+    item.querySelector('.telefone-input').value = '';
+    item.querySelector('.destino-card-sub').textContent = 'Clique para preencher';
   }
   atualizarContadorDestinos();
 }
