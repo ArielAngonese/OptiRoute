@@ -175,6 +175,7 @@ async function carregarHistorico() {
       // Busca as entregas na API
       const res = await fetch(`${API_URL}/deliveries`);
       entregas = await res.json();
+      entregas.sort((a, b) => b.id_entrega - a.id_entrega);
     } catch (e) {
       // Backend indisponível — usa dados de exemplo
       entregas = dadosExemplo();
