@@ -179,25 +179,34 @@ def get_distributor_by_id(id_distribuidora):
 # ─────────────────────────────────────────────
 
 # Insere uma nova entrega e retorna seu ID
-def insert_delivery(status, data, id_usuario, id_destinatario,
-                    id_endereco_origem, id_endereco_destino,
-                    distancia=None, tempo_estimado=None):
+def insert_delivery(status, data, id_usuario, id_endereco_origem, distancia=None, tempo_estimado=None):
     conn = connect()
     cursor = conn.cursor()
     query = """
-        INSERT INTO ENTREGA (status, data, distancia, tempo_estimado,
-                             id_usuario, id_destinatario,
-                             id_endereco_origem, id_endereco_destino)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO ENTREGA (status, data, distancia, tempo_estimado, id_usuario, id_endereco_origem)
+        VALUES (%s, %s, %s, %s, %s, %s)
     """
-    cursor.execute(query, (status, data, distancia, tempo_estimado,
-                           id_usuario, id_destinatario,
-                           id_endereco_origem, id_endereco_destino))
+    cursor.execute(query, (status, data, distancia, tempo_estimado, id_usuario, id_endereco_origem))
     conn.commit()
     id_entrega = cursor.lastrowid
     cursor.close()
     conn.close()
     return id_entrega
+
+# Insere um ponto de entrega (destinatário + endereço) para uma entrega específica
+def insert_delivery_point(id_entrega, id_destinatario, id_endereco, ordem, status="pendente"):
+    conn = connect()
+    cursor = conn.cursor()
+    query = """
+        INSERT INTO PONTO_ENTREGA (id_entrega, id_destinatario, id_endereco, ordem, status)
+        VALUES (%s, %s, %s, %s, %s)
+    """
+    cursor.execute(query, (id_entrega, id_destinatario, id_endereco, ordem, status))
+    conn.commit()
+    id_ponto = cursor.lastrowid
+    cursor.close()
+    conn.close()
+    return id_ponto
 
 # Busca todas as entregas e retorna uma lista de detalhes
 def get_all_deliveries():
@@ -207,25 +216,60 @@ def get_all_deliveries():
         SELECT 
             e.id_entrega, e.status, e.data, e.distancia, e.tempo_estimado,
             u.nome AS nome_usuario,
-            d.nome AS nome_destinatario, d.telefone,
             orig.rua AS rua_origem, orig.numero AS numero_origem,
             orig.cidade AS cidade_origem,
             orig.latitude AS lat_origem, orig.longitude AS lng_origem,
+            p.id_ponto, p.ordem, p.status AS status_ponto,
+            d.nome AS nome_destinatario, d.telefone,
             dest.rua AS rua_destino, dest.numero AS numero_destino,
             dest.cidade AS cidade_destino,
             dest.latitude AS lat_destino, dest.longitude AS lng_destino
         FROM ENTREGA e
         JOIN USUARIO u ON e.id_usuario = u.id_usuario
-        JOIN DESTINATARIO d ON e.id_destinatario = d.id_destinatario
         JOIN ENDERECO orig ON e.id_endereco_origem = orig.id_endereco
-        JOIN ENDERECO dest ON e.id_endereco_destino = dest.id_endereco
-        ORDER BY e.data DESC
+        JOIN PONTO_ENTREGA p ON e.id_entrega = p.id_entrega
+        JOIN DESTINATARIO d ON p.id_destinatario = d.id_destinatario
+        JOIN ENDERECO dest ON p.id_endereco = dest.id_endereco
+        ORDER BY e.data DESC, p.ordem ASC
     """
     cursor.execute(query)
-    deliveries = cursor.fetchall()
+    rows = cursor.fetchall()
     cursor.close()
     conn.close()
-    return deliveries
+
+    # Agrupa os pontos dentro de cada entrega
+    deliveries = {}
+    for row in rows:
+        id_entrega = row["id_entrega"]
+        if id_entrega not in deliveries:
+            deliveries[id_entrega] = {
+                "id_entrega": row["id_entrega"],
+                "status": row["status"],
+                "data": row["data"],
+                "distancia": row["distancia"],
+                "tempo_estimado": row["tempo_estimado"],
+                "nome_usuario": row["nome_usuario"],
+                "rua_origem": row["rua_origem"],
+                "numero_origem": row["numero_origem"],
+                "cidade_origem": row["cidade_origem"],
+                "lat_origem": row["lat_origem"],
+                "lng_origem": row["lng_origem"],
+                "pontos": []
+            }
+        deliveries[id_entrega]["pontos"].append({
+            "id_ponto": row["id_ponto"],
+            "ordem": row["ordem"],
+            "status_ponto": row["status_ponto"],
+            "nome_destinatario": row["nome_destinatario"],
+            "telefone": row["telefone"],
+            "rua_destino": row["rua_destino"],
+            "numero_destino": row["numero_destino"],
+            "cidade_destino": row["cidade_destino"],
+            "lat_destino": row["lat_destino"],
+            "lng_destino": row["lng_destino"]
+        })
+
+    return list(deliveries.values())
 
 # Busca uma entrega pelo ID e retorna seus detalhes
 def get_delivery_by_id(id_entrega):
@@ -235,24 +279,60 @@ def get_delivery_by_id(id_entrega):
         SELECT 
             e.id_entrega, e.status, e.data, e.distancia, e.tempo_estimado,
             u.nome AS nome_usuario,
-            d.nome AS nome_destinatario, d.telefone,
             orig.rua AS rua_origem, orig.numero AS numero_origem,
             orig.cidade AS cidade_origem,
             orig.latitude AS lat_origem, orig.longitude AS lng_origem,
+            p.id_ponto, p.ordem, p.status AS status_ponto,
+            d.nome AS nome_destinatario, d.telefone,
             dest.rua AS rua_destino, dest.numero AS numero_destino,
             dest.cidade AS cidade_destino,
             dest.latitude AS lat_destino, dest.longitude AS lng_destino
         FROM ENTREGA e
         JOIN USUARIO u ON e.id_usuario = u.id_usuario
-        JOIN DESTINATARIO d ON e.id_destinatario = d.id_destinatario
         JOIN ENDERECO orig ON e.id_endereco_origem = orig.id_endereco
-        JOIN ENDERECO dest ON e.id_endereco_destino = dest.id_endereco
+        JOIN PONTO_ENTREGA p ON e.id_entrega = p.id_entrega
+        JOIN DESTINATARIO d ON p.id_destinatario = d.id_destinatario
+        JOIN ENDERECO dest ON p.id_endereco = dest.id_endereco
         WHERE e.id_entrega = %s
+        ORDER BY p.ordem ASC
     """
     cursor.execute(query, (id_entrega,))
-    delivery = cursor.fetchone()
+    rows = cursor.fetchall()
     cursor.close()
     conn.close()
+
+    if not rows:
+        return None
+
+    delivery = {
+        "id_entrega": rows[0]["id_entrega"],
+        "status": rows[0]["status"],
+        "data": rows[0]["data"],
+        "distancia": rows[0]["distancia"],
+        "tempo_estimado": rows[0]["tempo_estimado"],
+        "nome_usuario": rows[0]["nome_usuario"],
+        "rua_origem": rows[0]["rua_origem"],
+        "numero_origem": rows[0]["numero_origem"],
+        "cidade_origem": rows[0]["cidade_origem"],
+        "lat_origem": rows[0]["lat_origem"],
+        "lng_origem": rows[0]["lng_origem"],
+        "pontos": []
+    }
+
+    for row in rows:
+        delivery["pontos"].append({
+            "id_ponto": row["id_ponto"],
+            "ordem": row["ordem"],
+            "status_ponto": row["status_ponto"],
+            "nome_destinatario": row["nome_destinatario"],
+            "telefone": row["telefone"],
+            "rua_destino": row["rua_destino"],
+            "numero_destino": row["numero_destino"],
+            "cidade_destino": row["cidade_destino"],
+            "lat_destino": row["lat_destino"],
+            "lng_destino": row["lng_destino"]
+        })
+
     return delivery
 
 # Atualiza a rota de uma entrega 
