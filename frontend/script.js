@@ -487,20 +487,38 @@ function abrirMapa(rota) {
       L.polyline(coords, { color: '#2563eb', weight: 4, opacity: 0.8 }).addTo(mapInstance);
     }
 
-    // Marcador de partida
+    // Ícone de partida — azul
     const iconPartida = L.divIcon({
       html: '<div style="width:14px;height:14px;background:#2563eb;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>',
       iconSize: [14, 14], iconAnchor: [7, 7], className: ''
     });
 
-    // Marcador de destino
+    // Ícone de parada intermediária — cinza
+    const iconParada = L.divIcon({
+      html: '<div style="width:12px;height:12px;background:#64748b;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>',
+      iconSize: [12, 12], iconAnchor: [6, 6], className: ''
+    });
+
+    // Ícone de destino final — vermelho
     const iconDestino = L.divIcon({
       html: '<div style="width:14px;height:14px;background:#dc2626;border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>',
       iconSize: [14, 14], iconAnchor: [7, 7], className: ''
     });
 
-    L.marker(coords[0], { icon: iconPartida }).bindPopup('Partida: ' + rota.origem).addTo(mapInstance);
-    L.marker(coords[coords.length - 1], { icon: iconDestino }).bindPopup('Destino: ' + rota.destinos[0]).addTo(mapInstance);
+    // Marcador de partida
+    L.marker(coords[0], { icon: iconPartida })
+      .bindPopup('🚀 Partida: ' + rota.origem)
+      .addTo(mapInstance);
+
+    // Marcador para cada ponto de entrega
+    rota.destinos.forEach((d, i) => {
+      const icon = i === rota.destinos.length - 1 ? iconDestino : iconParada;
+      const coordIndex = Math.round((i + 1) * (coords.length - 1) / rota.destinos.length);
+      const coord = coords[coordIndex] || coords[coords.length - 1];
+      L.marker(coord, { icon })
+        .bindPopup(`📦 Parada ${i + 1}: ${d}`)
+        .addTo(mapInstance);
+    });
 
     // Ajusta o zoom para mostrar toda a rota
     mapInstance.fitBounds(L.polyline(coords).getBounds(), { padding: [40, 40] });
