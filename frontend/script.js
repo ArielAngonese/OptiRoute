@@ -407,6 +407,48 @@ async function calcularRota() {
 
   entregas = [];
   abrirMapa(rotaAtual);
+  limparFormulario();
+
+
+}
+
+// Limpa todos os campos do formulário de nova rota
+function limparFormulario() {
+  document.getElementById('rota-nome').value = '';
+  document.getElementById('rota-origem').value = '';
+  document.getElementById('rota-data').value = '';
+
+  // Reseta a lista de destinos para apenas 1 card vazio
+  const lista = document.getElementById('lista-destinos');
+  lista.innerHTML = `
+    <div class="destino-card">
+      <div class="destino-card-header" onclick="toggleDestino(this)">
+        <span class="destino-num">1</span>
+        <div class="destino-card-info">
+          <div class="destino-card-titulo">Endereço 1</div>
+          <div class="destino-card-sub">Clique para preencher</div>
+        </div>
+        <span class="destino-card-toggle">∨</span>
+      </div>
+      <div class="destino-card-body aberto">
+        <div>
+          <div class="destino-card-label">Endereço</div>
+          <input type="text" class="form-input destino-input" placeholder="Rua, número — Erechim, RS" oninput="atualizarSubtitulo(this)" />
+        </div>
+        <div>
+          <div class="destino-card-label">Nome do destinatário</div>
+          <input type="text" class="form-input destinatario-input" placeholder="João da Silva" />
+        </div>
+        <div>
+          <div class="destino-card-label">Telefone (opcional)</div>
+          <input type="text" class="form-input telefone-input" placeholder="(54) 99999-9999" />
+        </div>
+        <button class="btn-remover-destino" onclick="removeDestino(this)">
+          🗑 Remover este endereço
+        </button>
+      </div>
+    </div>`;
+  atualizarContadorDestinos();
 }
 
 // ═══════════════════════════════════════════
