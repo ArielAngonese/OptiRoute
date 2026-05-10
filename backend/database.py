@@ -233,10 +233,43 @@ def get_all_deliveries():
         ORDER BY e.data DESC, p.ordem ASC
     """
     cursor.execute(query)
-    deliveries = cursor.fetchall()
+    rows = cursor.fetchall()
     cursor.close()
     conn.close()
-    return deliveries
+
+    # Agrupa os pontos dentro de cada entrega
+    deliveries = {}
+    for row in rows:
+        id_entrega = row["id_entrega"]
+        if id_entrega not in deliveries:
+            deliveries[id_entrega] = {
+                "id_entrega": row["id_entrega"],
+                "status": row["status"],
+                "data": row["data"],
+                "distancia": row["distancia"],
+                "tempo_estimado": row["tempo_estimado"],
+                "nome_usuario": row["nome_usuario"],
+                "rua_origem": row["rua_origem"],
+                "numero_origem": row["numero_origem"],
+                "cidade_origem": row["cidade_origem"],
+                "lat_origem": row["lat_origem"],
+                "lng_origem": row["lng_origem"],
+                "pontos": []
+            }
+        deliveries[id_entrega]["pontos"].append({
+            "id_ponto": row["id_ponto"],
+            "ordem": row["ordem"],
+            "status_ponto": row["status_ponto"],
+            "nome_destinatario": row["nome_destinatario"],
+            "telefone": row["telefone"],
+            "rua_destino": row["rua_destino"],
+            "numero_destino": row["numero_destino"],
+            "cidade_destino": row["cidade_destino"],
+            "lat_destino": row["lat_destino"],
+            "lng_destino": row["lng_destino"]
+        })
+
+    return list(deliveries.values())
 
 # Busca uma entrega pelo ID e retorna seus detalhes
 def get_delivery_by_id(id_entrega):
