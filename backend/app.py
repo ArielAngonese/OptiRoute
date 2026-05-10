@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from graph import graph
@@ -19,9 +20,12 @@ from backend.database import (
 )
 
 # Criação da aplicação Flask
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../frontend', static_url_path='')
 CORS(app)
 
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 # ================================
 # Rotas de ENTREGAS
 # ================================
@@ -122,7 +126,7 @@ def update_status(id):
         if "status" not in data:
             return jsonify({"erro": "Campo obrigatório ausente: status"}), 400
 
-        valid_statuses = ["pendente", "em_rota", "entregue"]
+        valid_statuses = ["pendente", "em_rota", "concluida"]
         if data["status"] not in valid_statuses:
             return jsonify({"erro": f"Status inválido. Use: {valid_statuses}"}), 400
 
