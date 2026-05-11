@@ -1,6 +1,7 @@
-# 📡 Documentação da API
+Kkkkk vai lá, não vai gastar tanto não!
+markdown# 📡 Documentação da API
 
-URL base: `http://localhost:5000`
+Base URL: `http://localhost:5000`
 
 ---
 
@@ -13,7 +14,7 @@ URL base: `http://localhost:5000`
 ```json
 {
     "name": "Ariel",
-    "email": "ariel.angonese12345@gmail.com",
+    "email": "ariel@email.com",
     "password": "123456"
 }
 ```
@@ -27,19 +28,14 @@ URL base: `http://localhost:5000`
 
 **Resposta de sucesso (201):**
 ```json
-{
-    "user_id": 1
-}
+{ "user_id": 1 }
 ```
 
 **Respostas de erro:**
 ```json
 { "erro": "Corpo da requisição inválido" }
-```
-```json
 { "erro": "Campo obrigatório ausente: password" }
-```
-```json
+{ "erro": "Email já cadastrado" }
 { "erro": "Erro ao criar usuário: ..." }
 ```
 
@@ -74,18 +70,24 @@ URL base: `http://localhost:5000`
 **Respostas de erro:**
 ```json
 { "erro": "Email ou senha inválidos" }
-```
-```json
 { "erro": "Campo obrigatório ausente: email" }
-```
-```json
 { "erro": "Erro ao realizar login: ..." }
 ```
+
+---
 
 ## 📦 Entregas
 
 ### Listar todas as entregas
 **GET** `/deliveries`
+
+**Parâmetro opcional:**
+| Parâmetro | Tipo | Descrição |
+|-----------|------|-----------|
+| `user_id` | inteiro | Filtra entregas de um usuário específico |
+
+**Exemplo:**
+GET /deliveries?user_id=1
 
 **Resposta de sucesso (200):**
 ```json
@@ -93,31 +95,36 @@ URL base: `http://localhost:5000`
     {
         "id_entrega": 1,
         "status": "pendente",
-        "data": "2026-04-21 15:00:00",
-        "distancia": 0.28,
+        "data": "Tue, 21 Apr 2026 15:00:00 GMT",
+        "distancia": 0.45,
         "tempo_estimado": 1,
         "nome_usuario": "Ariel",
-        "nome_destinatario": "Marcos André Lucas",
-        "telefone": "54999999999",
         "rua_origem": "Rua Sete de Setembro",
         "numero_origem": "100",
         "cidade_origem": "Erechim",
-        "lat_origem": -27.6339,
-        "lng_origem": -52.2744,
-        "rua_destino": "Rua Tiradentes",
-        "numero_destino": "200",
-        "cidade_destino": "Erechim",
-        "lat_destino": -27.6350,
-        "lng_destino": -52.2755
+        "lat_origem": "-27.6339000",
+        "lng_origem": "-52.2744000",
+        "pontos": [
+            {
+                "id_ponto": 1,
+                "ordem": 1,
+                "status_ponto": "pendente",
+                "nome_destinatario": "João Silva",
+                "telefone": "54999999999",
+                "rua_destino": "Rua Tiradentes",
+                "numero_destino": "200",
+                "cidade_destino": "Erechim",
+                "lat_destino": "-27.6350000",
+                "lng_destino": "-52.2755000"
+            }
+        ]
     }
 ]
 ```
 
 **Resposta de erro (500):**
 ```json
-{
-    "erro": "Erro ao buscar entregas: ..."
-}
+{ "erro": "Erro ao buscar entregas: ..." }
 ```
 
 ---
@@ -130,25 +137,11 @@ URL base: `http://localhost:5000`
 |-----------|------|-----------|
 | `id` | inteiro | ID da entrega |
 
-**Resposta de sucesso (200):**
-```json
-{
-    "id_entrega": 1,
-    "status": "pendente",
-    "data": "2026-04-21 15:00:00",
-    "distancia": 0.28,
-    "tempo_estimado": 1,
-    "nome_usuario": "Ariel",
-    "nome_destinatario": "Marcos André Lucas",
-    ...
-}
-```
+**Resposta de sucesso (200):** mesma estrutura do GET /deliveries mas com um único objeto.
 
 **Respostas de erro:**
 ```json
 { "erro": "Entrega não encontrada" }
-```
-```json
 { "erro": "Erro ao buscar entrega: ..." }
 ```
 
@@ -165,14 +158,28 @@ URL base: `http://localhost:5000`
     "origin_city": "Erechim",
     "origin_lat": -27.6339,
     "origin_lng": -52.2744,
-    "destination_street": "Rua Tiradentes",
-    "destination_number": "200",
-    "destination_city": "Erechim",
-    "destination_lat": -27.6350,
-    "destination_lng": -52.2755,
     "date": "2026-04-21 15:00:00",
     "user_id": 1,
-    "recipient_id": 1
+    "points": [
+        {
+            "destination_street": "Rua Tiradentes",
+            "destination_number": "200",
+            "destination_city": "Erechim",
+            "destination_lat": -27.6350,
+            "destination_lng": -52.2755,
+            "recipient_name": "João Silva",
+            "recipient_phone": "54999999999"
+        },
+        {
+            "destination_street": "Rua Alemanha",
+            "destination_number": "300",
+            "destination_city": "Erechim",
+            "destination_lat": -27.6360,
+            "destination_lng": -52.2765,
+            "recipient_name": "Maria Souza",
+            "recipient_phone": "54988888888"
+        }
+    ]
 }
 ```
 
@@ -184,31 +191,56 @@ URL base: `http://localhost:5000`
 | `origin_city` | string | Cidade de origem |
 | `origin_lat` | float | Latitude de origem |
 | `origin_lng` | float | Longitude de origem |
+| `date` | string | Data no formato `YYYY-MM-DD HH:MM:SS` |
+| `user_id` | inteiro | ID do usuário responsável |
+| `points` | array | Lista de pontos de entrega |
+
+**Campos de cada ponto:**
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
 | `destination_street` | string | Rua de destino |
 | `destination_number` | string | Número de destino |
 | `destination_city` | string | Cidade de destino |
 | `destination_lat` | float | Latitude de destino |
 | `destination_lng` | float | Longitude de destino |
-| `date` | string | Data no formato `YYYY-MM-DD HH:MM:SS` |
-| `user_id` | inteiro | ID do usuário responsável |
-| `recipient_id` | inteiro | ID do destinatário |
+| `recipient_name` | string | Nome do destinatário |
+| `recipient_phone` | string | Telefone do destinatário (opcional) |
 
 **Resposta de sucesso (201):**
 ```json
-{
-    "delivery_id": 1
-}
+{ "delivery_id": 1 }
 ```
 
 **Respostas de erro:**
 ```json
 { "erro": "Corpo da requisição inválido" }
-```
-```json
 { "erro": "Campo obrigatório ausente: date" }
-```
-```json
+{ "erro": "Adicione pelo menos um ponto de entrega" }
 { "erro": "Erro ao criar entrega: ..." }
+```
+
+---
+
+### Atualizar status da entrega
+**PATCH** `/deliveries/<id>/status`
+
+**Corpo da requisição (JSON):**
+```json
+{ "status": "em_rota" }
+```
+
+**Status válidos:** `pendente`, `em_rota`, `concluida`
+
+**Resposta de sucesso (200):**
+```json
+{ "mensagem": "Status atualizado com sucesso" }
+```
+
+**Respostas de erro:**
+```json
+{ "erro": "Entrega não encontrada" }
+{ "erro": "Status inválido. Use: ['pendente', 'em_rota', 'concluida']" }
+{ "erro": "Erro ao atualizar status: ..." }
 ```
 
 ---
@@ -223,8 +255,11 @@ URL base: `http://localhost:5000`
 {
     "origin_lat": -27.6339,
     "origin_lng": -52.2744,
-    "destination_lat": -27.6350,
-    "destination_lng": -52.2755
+    "points": [
+        { "lat": -27.6350, "lng": -52.2755 },
+        { "lat": -27.6360, "lng": -52.2765 }
+    ],
+    "delivery_id": 1
 }
 ```
 
@@ -233,8 +268,7 @@ URL base: `http://localhost:5000`
 |-------|------|-----------|
 | `origin_lat` | float | Latitude de origem |
 | `origin_lng` | float | Longitude de origem |
-| `destination_lat` | float | Latitude de destino |
-| `destination_lng` | float | Longitude de destino |
+| `points` | array | Lista de pontos com `lat` e `lng` |
 
 **Campo opcional:**
 | Campo | Tipo | Descrição |
@@ -249,7 +283,7 @@ URL base: `http://localhost:5000`
         [-27.6346005, -52.2741496],
         [-27.6352739, -52.2760208]
     ],
-    "distance_km": 0.28,
+    "distance_km": 0.45,
     "estimated_time_minutes": 1
 }
 ```
@@ -257,10 +291,7 @@ URL base: `http://localhost:5000`
 **Respostas de erro:**
 ```json
 { "erro": "Corpo da requisição inválido" }
-```
-```json
 { "erro": "Campo obrigatório ausente: origin_lat" }
-```
-```json
+{ "erro": "Adicione pelo menos um ponto de entrega" }
 { "erro": "Erro ao calcular rota: ..." }
 ```
