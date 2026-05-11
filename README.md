@@ -96,42 +96,52 @@ O **Algoritmo de Dijkstra** é executado sobre esse grafo para encontrar o camin
 
 ## 🚀 Como Executar
 
-**1. Clone o repositório**
-
+### 1. Clone o repositório
 ```bash
 git clone https://github.com/ArielAngonese/Sistema-de-Otimizacao-de-Rotas-para-Entregas-Urbanas.git
 cd Sistema-de-Otimizacao-de-Rotas-para-Entregas-Urbanas
 ```
 
-**2. Instale os pré-requisitos**
-
+### 2. Instale as dependências
 ```bash
 pip install -r requirements.txt
 ```
 
-**3. Configure o banco de dados**
-
-Edite o arquivo `config.py` com suas credenciais MySQL:
+### 3. Configure o banco de dados
+O arquivo `config.py` não está versionado por segurança. Crie o arquivo `backend/config.py` manualmente com o seguinte conteúdo:
 
 ```python
 DB_CONFIG = {
-    "host": "seu_host_railway",
-    "port": 00000,
-    "user": "root",
+    "host": "seu_host",
+    "port": 0000,
+    "user": "seu_usuario",
     "password": "sua_senha",
     "database": "railway"
 }
 ```
 
-**4. Inicie o servidor**
+> As credenciais de acesso ao banco serão fornecidas separadamente pelo autor do projeto.
 
+
+### 4. Inicie o servidor
 ```bash
 python main.py
 ```
 
-**5. Acesse a interface**
+O servidor vai demorar alguns segundos para iniciar pois carrega o mapa de Erechim na inicialização. Quando aparecer a mensagem abaixo, está pronto:
 
-Abra o arquivo `index.html` no navegador ou acesse `http://localhost:5000`.
+```bash 
+Running on http://127.0.0.1:5000
+```
+
+### 5. Acesse a interface
+Abra o navegador e acesse:
+```bash
+http://localhost:5000
+```
+
+### 6. Crie uma conta
+Na tela de login, clique em **Sign up** para criar uma conta e começar a usar o sistema.
 
 ---
 
