@@ -33,9 +33,9 @@
 
           <!-- Título e subtítulo -->
           <h1 class="auth-title">
-            Welcome to PI —<br />OTIMIZAÇÃO DE ROTAS<br />URBANAS
+            Bem-vindo ao PI —<br />OTIMIZAÇÃO DE ROTAS<br />URBANAS
           </h1>
-          <p class="auth-subtitle">Sign in to continue</p>
+          <p class="auth-subtitle">Entre para continuar</p>
 
           <!-- Botão Google -->
           <button
@@ -60,11 +60,11 @@
                 fill="#EA4335"
               />
             </svg>
-            Continue with Google
+            Continuar com Google
           </button>
 
           <!-- Separador -->
-          <div class="divider"><span>OR</span></div>
+          <div class="divider"><span>OU</span></div>
 
           <!-- Campo Email -->
           <div class="field-group">
@@ -88,17 +88,13 @@
                   stroke-width="1.2"
                 />
               </svg>
-              <input
-                type="email"
-                id="login-email"
-                placeholder="you@example.com"
-              />
+              <input type="email" id="login-email" placeholder="Seu email" />
             </div>
           </div>
 
           <!-- Campo Senha -->
           <div class="field-group">
-            <label>Password</label>
+            <label>Senha</label>
             <div class="input-wrapper">
               <svg
                 class="input-icon"
@@ -131,15 +127,15 @@
           </div>
 
           <!-- Botão Sign in -->
-          <button class="btn-primary" onclick="handleLogin()">Sign in</button>
+          <button class="btn-primary" onclick="handleLogin()">Entrar</button>
 
           <!-- Links esqueci senha e cadastro -->
           <div class="auth-links">
-            <a href="#" onclick="showPage('page-forgot')">Forgot password?</a>
+            <a href="#" onclick="showPage('page-forgot')">Esqueceu a senha?</a>
             <span
-              >Need an account?
+              >Não tem conta?
               <a href="#" onclick="showPage('page-register')"
-                ><strong>Sign up</strong></a
+                ><strong>Cadastre-se</strong></a
               ></span
             >
           </div>
@@ -162,17 +158,17 @@
                 stroke-linecap="round"
               />
             </svg>
-            Back to sign in
+            Voltar para o login
           </button>
 
           <!-- Título -->
           <h1 class="auth-title" style="font-size: 1.6rem; margin-top: 0.5rem">
-            Create your account
+            Criar sua conta
           </h1>
 
           <!-- Campo Nome -->
           <div class="field-group">
-            <label>Name</label>
+            <label>Nome</label>
             <div class="input-wrapper">
               <svg
                 class="input-icon"
@@ -195,7 +191,11 @@
                   stroke-linecap="round"
                 />
               </svg>
-              <input type="text" id="reg-name" placeholder="Your full name" />
+              <input
+                type="text"
+                id="reg-name"
+                placeholder="Seu nome completo"
+              />
             </div>
           </div>
 
@@ -221,17 +221,13 @@
                   stroke-width="1.2"
                 />
               </svg>
-              <input
-                type="email"
-                id="reg-email"
-                placeholder="you@example.com"
-              />
+              <input type="email" id="reg-email" placeholder="seu@email.com" />
             </div>
           </div>
 
           <!-- Campo Senha -->
           <div class="field-group">
-            <label>Password</label>
+            <label>Senha</label>
             <div class="input-wrapper">
               <svg
                 class="input-icon"
@@ -258,14 +254,14 @@
               <input
                 type="password"
                 id="reg-password"
-                placeholder="Min. 8 characters"
+                placeholder="Mín. 8 caracteres"
               />
             </div>
           </div>
 
           <!-- Campo Confirmar Senha -->
           <div class="field-group">
-            <label><strong>Confirm Password</strong></label>
+            <label><strong>Confirmar Senha</strong></label>
             <div class="input-wrapper">
               <svg
                 class="input-icon"
@@ -292,14 +288,14 @@
               <input
                 type="password"
                 id="reg-confirm"
-                placeholder="Re-enter password"
+                placeholder="Repita a senha"
               />
             </div>
           </div>
 
           <!-- Botão criar conta -->
           <button class="btn-primary" onclick="handleRegister()">
-            Create account
+            Criar conta
           </button>
 
           <!-- Mensagem de erro -->
@@ -323,16 +319,14 @@
                 stroke-linecap="round"
               />
             </svg>
-            Back to sign in
+            Voltar para o login
           </button>
 
           <!-- Título e descrição -->
           <h1 class="auth-title" style="font-size: 1.6rem; margin-top: 0.5rem">
-            Reset password
+            Redefinir senha
           </h1>
-          <p class="auth-subtitle">
-            Enter your email and we'll send you a reset link.
-          </p>
+          <p class="auth-subtitle">Digite seu email para receber o link</p>
 
           <!-- Campo Email -->
           <div class="field-group">
@@ -359,7 +353,7 @@
               <input
                 type="email"
                 id="forgot-email"
-                placeholder="you@example.com"
+                placeholder="seu@email.com"
               />
             </div>
           </div>
@@ -369,7 +363,7 @@
             class="btn-primary"
             onclick="alert('Link enviado! (simulado)')"
           >
-            Send reset link
+            Enviar link
           </button>
         </div>
       </div>
