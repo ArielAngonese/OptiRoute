@@ -78,6 +78,7 @@ async function handleLogin() {
     
     // Salva o usuário logado com os dados reais do backend
     currentUser = { id: data.user_id, nome: data.name, email: data.email };
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
     showPage('page-app');
     showApp('dashboard');
 
