@@ -691,4 +691,18 @@ function dadosExemplo() {
 // Executa quando a página termina de carregar
 document.addEventListener('DOMContentLoaded', () => {
   atualizarContadorDestinos();
+
+  const savedUser = localStorage.getItem('currentUser');
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    showPage('page-app');
+    showApp('dashboard');
+  }
 });
+
+// Faz logout do usuário e volta para a tela de login
+function sair() {
+  localStorage.removeItem('currentUser');
+  currentUser = null;
+  showPage('page-login');
+}
