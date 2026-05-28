@@ -338,7 +338,7 @@ async function calcularRota() {
     telefone: card.querySelector('.telefone-input').value.trim(),
     lat: card.querySelector('.lat-input').value.trim(),
     lng: card.querySelector('.lng-input').value.trim()
-  })).filter(p => p.endereco);
+  })).filter(p => p.endereco || (p.lat && p.lng));
 
   if (!nome) { alert('Informe o nome da rota.'); return; }
   if (!origem) { alert('Informe o ponto de partida.'); return; }
@@ -354,10 +354,24 @@ async function calcularRota() {
     // Geocodifica origem
     const origemCoords = await geocodificar(origem);
 
-    // Geocodifica todos os pontos
-    const pontosCoords = await Promise.all(pontos.map(p => {
-      if (p.lat && p.lng) return { lat: parseFloat(p.lat), lon: parseFloat(p.lng) };
-      return geocodificar(p.endereco);
+    // Processa todos os pontos com prioridade: coordenadas > endereço
+    const pontosCoords = await Promise.all(pontos.map(async (p) => {
+      // Se o usuário forneceu AMBAS coordenadas (lat e lng), usa-as diretamente
+      if (p.lat && p.lng) {
+        const lat = parseFloat(p.lat);
+        const lng = parseFloat(p.lng);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          console.log(`✓ Usando coordenadas fornecidas: (${lat}, ${lng})`);
+          return { lat: lat, lon: lng };
+        }
+      }
+      // Se não há coordenadas válidas, geocodifica pelo endereço
+      if (p.endereco) {
+        console.log(`→ Geocodificando endereço: ${p.endereco}`);
+        return await geocodificar(p.endereco);
+      }
+      // Não deve chegar aqui (validação já garante que tem endereço OU coordenadas)
+      throw new Error('Ponto sem endereço ou coordenadas válidas');
     }));
 
     // Formata a data para o banco
@@ -376,7 +390,7 @@ async function calcularRota() {
         date: dataFormatada,
         user_id: currentUser.id,
         points: pontos.map((p, i) => ({
-          destination_street: p.endereco,
+          destination_street: p.endereco || `Coordenadas (${pontosCoords[i].lat.toFixed(4)}, ${pontosCoords[i].lon.toFixed(4)})`,
           destination_number: "S/N",
           destination_city: "Erechim",
           destination_lat: pontosCoords[i].lat,
