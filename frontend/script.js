@@ -78,6 +78,7 @@ async function handleLogin() {
     
     // Salva o usuário logado com os dados reais do backend
     currentUser = { id: data.user_id, nome: data.name, email: data.email };
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
     showPage('page-app');
     showApp('dashboard');
 
@@ -252,6 +253,19 @@ function addDestino() {
         <div class="destino-card-label">Telefone (opcional)</div>
         <input type="text" class="form-input telefone-input" placeholder="(54) 99999-9999" />
       </div>
+      <div>
+        <div class="destino-card-label">Coordenadas (opcional)</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div>
+            <div class="destino-card-label" style="font-weight: 400; font-size: 0.82rem; margin-bottom: 4px;">Latitude</div>
+            <input type="number" step="any" class="form-input lat-input" placeholder="-27.6310" />
+          </div>
+          <div>
+            <div class="destino-card-label" style="font-weight: 400; font-size: 0.82rem; margin-bottom: 4px;">Longitude</div>
+            <input type="number" step="any" class="form-input lng-input" placeholder="-52.2681" />
+          </div>
+        </div>
+      </div>
       <button class="btn-remover-destino" onclick="removeDestino(this)">
         🗑 Remover este endereço
       </button>
@@ -321,7 +335,9 @@ async function calcularRota() {
   const pontos = cards.map(card => ({
     endereco: card.querySelector('.destino-input').value.trim(),
     destinatario: card.querySelector('.destinatario-input').value.trim(),
-    telefone: card.querySelector('.telefone-input').value.trim()
+    telefone: card.querySelector('.telefone-input').value.trim(),
+    lat: card.querySelector('.lat-input').value.trim(),
+    lng: card.querySelector('.lng-input').value.trim()
   })).filter(p => p.endereco);
 
   if (!nome) { alert('Informe o nome da rota.'); return; }
@@ -339,7 +355,10 @@ async function calcularRota() {
     const origemCoords = await geocodificar(origem);
 
     // Geocodifica todos os pontos
-    const pontosCoords = await Promise.all(pontos.map(p => geocodificar(p.endereco)));
+    const pontosCoords = await Promise.all(pontos.map(p => {
+      if (p.lat && p.lng) return { lat: parseFloat(p.lat), lon: parseFloat(p.lng) };
+      return geocodificar(p.endereco);
+    }));
 
     // Formata a data para o banco
     const dataFormatada = new Date(data).toISOString().slice(0, 19).replace('T', ' ');
@@ -442,6 +461,19 @@ function limparFormulario() {
         <div>
           <div class="destino-card-label">Telefone (opcional)</div>
           <input type="text" class="form-input telefone-input" placeholder="(54) 99999-9999" />
+        </div>
+        <div>
+          <div class="destino-card-label">Coordenadas (opcional)</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div>
+              <div class="destino-card-label" style="font-weight: 400; font-size: 0.82rem; margin-bottom: 4px;">Latitude</div>
+              <input type="number" step="any" class="form-input lat-input" placeholder="-27.6310" />
+            </div>
+            <div>
+              <div class="destino-card-label" style="font-weight: 400; font-size: 0.82rem; margin-bottom: 4px;">Longitude</div>
+              <input type="number" step="any" class="form-input lng-input" placeholder="-52.2681" />
+            </div>
+          </div>
         </div>
         <button class="btn-remover-destino" onclick="removeDestino(this)">
           🗑 Remover este endereço
