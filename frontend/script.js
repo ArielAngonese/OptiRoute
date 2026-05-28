@@ -246,14 +246,6 @@ function addDestino() {
         <input type="text" class="form-input destino-input" placeholder="Rua, número — Erechim, RS" oninput="atualizarSubtitulo(this)" />
       </div>
       <div>
-        <div class="destino-card-label">Nome do destinatário</div>
-        <input type="text" class="form-input destinatario-input" placeholder="João da Silva" />
-      </div>
-      <div>
-        <div class="destino-card-label">Telefone (opcional)</div>
-        <input type="text" class="form-input telefone-input" placeholder="(54) 99999-9999" />
-      </div>
-      <div>
         <div class="destino-card-label">Coordenadas (opcional)</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div>
@@ -265,6 +257,14 @@ function addDestino() {
             <input type="number" step="any" class="form-input lng-input" placeholder="-52.2681" />
           </div>
         </div>
+      </div>
+      <div>
+        <div class="destino-card-label">Nome do destinatário</div>
+        <input type="text" class="form-input destinatario-input" placeholder="João da Silva" />
+      </div>
+      <div>
+        <div class="destino-card-label">Telefone (opcional)</div>
+        <input type="text" class="form-input telefone-input" placeholder="(54) 99999-9999" />
       </div>
       <button class="btn-remover-destino" onclick="removeDestino(this)">
         🗑 Remover este endereço
