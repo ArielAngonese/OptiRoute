@@ -619,14 +619,17 @@ function abrirMapaEntrega(entrega) {
 
   const pontos = entrega.pontos || [];
 
+  // Usa a rota otimizada se existir, caso contrário usa apenas os destinos
+  const routeCoords = entrega.route 
+    ? entrega.route 
+    : [[entrega.lat_origem, entrega.lng_origem], ...pontos.map(p => [p.lat_destino, p.lng_destino])];
+
   const rota = {
     nome: entrega.nome || `Entrega #${entrega.id_entrega}`,
     origem: `${entrega.rua_origem}, ${entrega.numero_origem} — ${entrega.cidade_origem}`,
     destinos: pontos.map(p => `${p.rua_destino}, ${p.numero_destino} — ${p.cidade_destino}`),
     coordenadas: pontos.map(p => [p.lat_destino, p.lng_destino]),
-    route: entrega.lat_origem
-      ? [[entrega.lat_origem, entrega.lng_origem], ...pontos.map(p => [p.lat_destino, p.lng_destino])]
-      : [[-27.63, -52.26], [-27.65, -52.28]],
+    route: routeCoords,
     distance_km: entrega.distancia || '—',
     estimated_time_minutes: entrega.tempo_estimado || '—'
   };
@@ -723,10 +726,54 @@ function historicoItemHTML(e) {
 // Retorna dados simulados quando o backend não está disponível
 function dadosExemplo() {
   return [
-    { id_entrega: 1, nome: 'Entrega Centro — 13/04', status: 'concluida', distancia: 12.4, tempo_estimado: 38, data: '2026-04-13', rua_origem: 'Av. Jabaquara', numero_origem: 500, cidade_origem: 'São Paulo', rua_destino: 'Rua Vergueiro', numero_destino: 3000, cidade_destino: 'São Paulo', lat_origem: -23.62, lng_origem: -46.65, lat_destino: -23.58, lng_destino: -46.63 },
-    { id_entrega: 2, nome: 'Rota Zona Sul — 12/04', status: 'em_rota', distancia: 18.7, tempo_estimado: 55, data: '2026-04-12', rua_origem: 'Av. Saúde', numero_origem: 1200, cidade_origem: 'São Paulo', rua_destino: 'Rua Domingos de Moraes', numero_destino: 600, cidade_destino: 'São Paulo', lat_origem: -23.63, lng_origem: -46.64, lat_destino: -23.60, lng_destino: -46.62 },
-    { id_entrega: 3, nome: 'Distribuição Lapa — 11/04', status: 'concluida', distancia: 8.2, tempo_estimado: 25, data: '2026-04-11', rua_origem: 'Rua Guaicurus', numero_origem: 100, cidade_origem: 'São Paulo', rua_destino: 'Av. Pompéia', numero_destino: 400, cidade_destino: 'São Paulo', lat_origem: -23.53, lng_origem: -46.70, lat_destino: -23.54, lng_destino: -46.68 },
-    { id_entrega: 4, nome: 'Entrega Pinheiros — 10/04', status: 'pendente', distancia: 9.6, tempo_estimado: 30, data: '2026-04-10', rua_origem: 'Rua dos Pinheiros', numero_origem: 500, cidade_origem: 'São Paulo', rua_destino: 'Av. Faria Lima', numero_destino: 2000, cidade_destino: 'São Paulo', lat_origem: -23.56, lng_origem: -46.67, lat_destino: -23.57, lng_destino: -46.69 },
+    { 
+      id_entrega: 1, 
+      status: 'concluida', 
+      distancia: 12.4, 
+      tempo_estimado: 38, 
+      data: '2026-04-13', 
+      rua_origem: 'Av. Jabaquara', 
+      numero_origem: '500', 
+      cidade_origem: 'São Paulo', 
+      lat_origem: -23.62, 
+      lng_origem: -46.65, 
+      route: [[-23.62, -46.65], [-23.61, -46.64], [-23.60, -46.64], [-23.59, -46.63], [-23.58, -46.63]],
+      pontos: [
+        { rua_destino: 'Rua Vergueiro', numero_destino: '3000', cidade_destino: 'São Paulo', lat_destino: -23.58, lng_destino: -46.63, nome_destinatario: 'João Silva', telefone: '(11) 99999-9999' }
+      ]
+    },
+    { 
+      id_entrega: 2, 
+      status: 'em_rota', 
+      distancia: 18.7, 
+      tempo_estimado: 55, 
+      data: '2026-04-12', 
+      rua_origem: 'Av. Saúde', 
+      numero_origem: '1200', 
+      cidade_origem: 'São Paulo', 
+      lat_origem: -23.63, 
+      lng_origem: -46.64, 
+      route: [[-23.63, -46.64], [-23.62, -46.63], [-23.61, -46.63], [-23.60, -46.62]],
+      pontos: [
+        { rua_destino: 'Rua Domingos de Moraes', numero_destino: '600', cidade_destino: 'São Paulo', lat_destino: -23.60, lng_destino: -46.62, nome_destinatario: 'Maria Santos', telefone: '(11) 98888-8888' }
+      ]
+    },
+    { 
+      id_entrega: 3, 
+      status: 'concluida', 
+      distancia: 8.2, 
+      tempo_estimado: 25, 
+      data: '2026-04-11', 
+      rua_origem: 'Rua Guaicurus', 
+      numero_origem: '100', 
+      cidade_origem: 'São Paulo', 
+      lat_origem: -23.53, 
+      lng_origem: -46.70, 
+      route: [[-23.53, -46.70], [-23.535, -46.69], [-23.54, -46.68]],
+      pontos: [
+        { rua_destino: 'Av. Pompéia', numero_destino: '400', cidade_destino: 'São Paulo', lat_destino: -23.54, lng_destino: -46.68, nome_destinatario: 'Pedro Costa', telefone: '(11) 97777-7777' }
+      ]
+    },
   ];
 }
 

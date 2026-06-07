@@ -210,6 +210,7 @@ def insert_delivery_point(id_entrega, id_destinatario, id_endereco, ordem, statu
 
 # Busca todas as entregas e retorna uma lista de detalhes
 def get_all_deliveries(user_id=None):
+    import json
     conn = connect()
     cursor = conn.cursor(dictionary=True)
     query = """
@@ -223,13 +224,15 @@ def get_all_deliveries(user_id=None):
             d.nome AS nome_destinatario, d.telefone,
             dest.rua AS rua_destino, dest.numero AS numero_destino,
             dest.cidade AS cidade_destino,
-            dest.latitude AS lat_destino, dest.longitude AS lng_destino
+            dest.latitude AS lat_destino, dest.longitude AS lng_destino,
+            r.coordenadas
         FROM ENTREGA e
         JOIN USUARIO u ON e.id_usuario = u.id_usuario
         JOIN ENDERECO orig ON e.id_endereco_origem = orig.id_endereco
         JOIN PONTO_ENTREGA p ON e.id_entrega = p.id_entrega
         JOIN DESTINATARIO d ON p.id_destinatario = d.id_destinatario
         JOIN ENDERECO dest ON p.id_endereco = dest.id_endereco
+        LEFT JOIN ROTA r ON e.id_entrega = r.id_entrega
     """
 
     if user_id:
@@ -247,6 +250,14 @@ def get_all_deliveries(user_id=None):
     for row in rows:
         id_entrega = row["id_entrega"]
         if id_entrega not in deliveries:
+            # Parse coordenadas da rota se existirem
+            route_coords = None
+            if row["coordenadas"]:
+                try:
+                    route_coords = json.loads(row["coordenadas"])
+                except Exception as e:
+                    route_coords = None
+            
             deliveries[id_entrega] = {
                 "id_entrega": row["id_entrega"],
                 "status": row["status"],
@@ -259,6 +270,7 @@ def get_all_deliveries(user_id=None):
                 "cidade_origem": row["cidade_origem"],
                 "lat_origem": row["lat_origem"],
                 "lng_origem": row["lng_origem"],
+                "route": route_coords,
                 "pontos": []
             }
         deliveries[id_entrega]["pontos"].append({
@@ -365,3 +377,28 @@ def update_delivery_status(id_entrega, status):
     conn.commit()
     cursor.close()
     conn.close()
+
+# ─────────────────────────────────────────────
+# HISTÓRICO DE ROTAS
+# ─────────────────────────────────────────────
+
+def insert_route(id_entrega, coordenadas):
+    conn = connect()
+    cursor = conn.cursor()
+    query = """
+        INSERT INTO ROTA (id_entrega, coordenadas)
+        VALUES (%s, %s)
+    """
+    cursor.execute(query, (id_entrega, coordenadas))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def get_route_by_delivery(id_entrega):
+    conn = connect()
+    cursor = conn.cursor(dictionary=True, buffered=True)
+    cursor.execute("SELECT * FROM ROTA WHERE id_entrega = %s", (id_entrega,))
+    route = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return route

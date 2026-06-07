@@ -1,3 +1,4 @@
+import json
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -17,7 +18,9 @@ from backend.database import (
     insert_user, 
     validate_login, 
     insert_recipient, 
-    update_delivery_status
+    update_delivery_status,
+    insert_route,
+    get_route_by_delivery
 )
 
 # Criação da aplicação Flask
@@ -156,6 +159,23 @@ def update_status(id):
         return jsonify({"erro": f"Erro ao atualizar status: {str(e)}"}), 500
 
 # ================================
+# Histórico de rotas de uma entrega
+# ================================
+
+@app.route("/deliveries/<int:id>/route", methods=["GET"])
+def get_delivery_route(id):
+    try:
+        import json
+        route = get_route_by_delivery(id)
+        if route is None:
+            return jsonify({"erro": "Rota não encontrada"}), 404
+        return jsonify({
+            "route": json.loads(route["coordenadas"])
+        })
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao buscar rota: {str(e)}"}), 500
+
+# ================================
 # Rotas de CALCULO DE ROTA
 # ================================
 
@@ -208,6 +228,7 @@ def calculate_route_api():
                 round(total_distance, 2),
                 estimated_time
             )
+            insert_route(data["delivery_id"], json.dumps(full_route))
 
         return jsonify({
             "route": full_route,
