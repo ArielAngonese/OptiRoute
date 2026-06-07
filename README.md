@@ -86,6 +86,14 @@ O **Algoritmo de Dijkstra** é executado sobre esse grafo para encontrar o camin
 
 ---
 
+## 📄 Documentação
+
+- [Documentação da API](docs/api.md)
+- [Artigo Científico](docs/article.md)
+- [SQL do Projeto](docs/schema.sql)
+
+---
+
 ## ⚙️ Pré-requisitos
 
 - Python 3.8+
@@ -112,18 +120,19 @@ O arquivo `config.py` não está versionado por segurança. Crie o arquivo `back
 
 ```python
 DB_CONFIG = {
-    "host": "seu_host",
-    "port": 0000,
-    "user": "seu_usuario",
-    "password": "sua_senha",
-    "database": "railway"
+    "host": "localhost",
+    "port": 3306,
+    "user": "root",
+    "password": "sua_senha_mysql",
+    "database": "projeto_rotas"
 }
 ```
 
-> As credenciais de acesso ao banco serão fornecidas separadamente pelo autor do projeto.
+### 4. Crie as tabelas no banco de dados
+Com o MySQL rodando, crie o banco e execute o SQL disponível em [`docs/schema.sql`](docs/schema.sql).
 
 
-### 4. Inicie o servidor
+### 5. Inicie o servidor
 ```bash
 python main.py
 ```
@@ -134,13 +143,13 @@ O servidor vai demorar alguns segundos para iniciar pois carrega o mapa de Erech
 Running on http://127.0.0.1:5000
 ```
 
-### 5. Acesse a interface
+### 6. Acesse a interface
 Abra o navegador e acesse:
 ```bash
 http://localhost:5000
 ```
 
-### 6. Crie uma conta
+### 7. Crie uma conta
 Na tela de login, clique em **Sign up** para criar uma conta e começar a usar o sistema.
 
 ---
