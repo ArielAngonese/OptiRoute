@@ -1,7 +1,6 @@
-Kkkkk vai lá, não vai gastar tanto não!
-markdown# 📡 Documentação da API
+# 📡 Documentação da API
 
-Base URL: `http://localhost:5000`
+URL base: `http://localhost:5000`
 
 ---
 
@@ -86,8 +85,7 @@ Base URL: `http://localhost:5000`
 |-----------|------|-----------|
 | `user_id` | inteiro | Filtra entregas de um usuário específico |
 
-**Exemplo:**
-GET /deliveries?user_id=1
+**Exemplo:** `GET /deliveries?user_id=1`
 
 **Resposta de sucesso (200):**
 ```json
@@ -137,7 +135,7 @@ GET /deliveries?user_id=1
 |-----------|------|-----------|
 | `id` | inteiro | ID da entrega |
 
-**Resposta de sucesso (200):** mesma estrutura do GET /deliveries mas com um único objeto.
+**Resposta de sucesso (200):** mesma estrutura do GET /deliveries, mas com um único objeto.
 
 **Respostas de erro:**
 ```json
@@ -294,4 +292,31 @@ GET /deliveries?user_id=1
 { "erro": "Campo obrigatório ausente: origin_lat" }
 { "erro": "Adicione pelo menos um ponto de entrega" }
 { "erro": "Erro ao calcular rota: ..." }
+```
+
+---
+
+### Buscar rota de uma entrega
+**GET** `/deliveries/<id>/route`
+
+**Parâmetros:**
+| Parâmetro | Tipo | Descrição |
+|-----------|------|-----------|
+| `id` | inteiro | ID da entrega |
+
+**Resposta de sucesso (200):**
+```json
+{
+    "route": [
+        [-27.6339245, -52.2744271],
+        [-27.6346005, -52.2741496],
+        [-27.6352739, -52.2760208]
+    ]
+}
+```
+
+**Respostas de erro:**
+```json
+{ "erro": "Rota não encontrada" }
+{ "erro": "Erro ao buscar rota: ..." }
 ```
