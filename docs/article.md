@@ -228,7 +228,7 @@ O algoritmo de Dijkstra, implementado de forma manual com o uso de fila de prior
 
 O sistema desenvolvido atingiu os objetivos propostos, oferecendo uma interface funcional para o planejamento e registro de entregas urbanas, com visualização das rotas calculadas sobre o mapa real da cidade. A integração entre frontend, backend e banco de dados possibilitou o funcionamento completo do fluxo de uma entrega, desde o cadastro até a consulta ao histórico de rotas anteriores.
 
-O código-fonte completo do sistema, incluindo a documentação da API e o esquema do banco de dados, está disponível no repositório do projeto em: https://www.forge.uricer.edu.br/2026-1-ProjetoIntegrador3/GrupoE. O commit correspondente à entrega final pode ser acessado em: [link do commit final].
+O código-fonte completo do sistema, incluindo a documentação da API e o esquema do banco de dados, está disponível no repositório do projeto em: https://www.forge.uricer.edu.br/2026-1-ProjetoIntegrador3/GrupoE. O commit correspondente à entrega final pode ser acessado em: [http://forge.uricer.edu.br/2026-1-ProjetoIntegrador3/GrupoE/commit/699038054c48c6607f6205dc6ecb4dd7625ca3df].
 
 Como trabalhos futuros, destacam-se as seguintes possibilidades de evolução do sistema:
 
