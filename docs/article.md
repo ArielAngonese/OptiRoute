@@ -30,11 +30,11 @@ Nesse contexto, técnicas computacionais baseadas na teoria dos grafos têm sido
 
 Paralelamente, a disponibilidade de bases de dados geográficas abertas tem facilitado o desenvolvimento de aplicações que utilizam informações reais sobre a estrutura urbana. Um exemplo relevante é o projeto OpenStreetMap, uma plataforma colaborativa que disponibiliza dados cartográficos detalhados de ruas, avenidas e interseções de diversas cidades ao redor do mundo. Esses dados permitem representar a malha viária de forma realista, possibilitando a construção de sistemas de roteirização aplicáveis a cenários urbanos reais.
 
-Diante desse cenário, este trabalho propõe o desenvolvimento de um sistema web de roteirização voltado ao cálculo da rota mais eficiente entre uma distribuidora e múltiplos pontos de entrega selecionados pelo usuário. O sistema utilizará dados geográficos obtidos a partir do OpenStreetMap e aplicará o algoritmo de Dijkstra para determinar o caminho mais curto entre cada par de pontos consecutivos da rota, construindo o trajeto completo de forma progressiva.
+Diante desse cenário, este trabalho propõe o desenvolvimento de um sistema web de roteirização voltado ao cálculo da rota mais eficiente entre um ponto de origem definido pelo usuário e múltiplos pontos de entrega. O sistema permite que o entregador informe o endereço ou as coordenadas geográficas do ponto de partida, defina os destinos desejados e visualize a rota otimizada calculada.
 
 A problemática abordada neste trabalho está diretamente relacionada à otimização de rotas, tema amplamente estudado na literatura por meio do *Vehicle Routing Problem* (VRP), que envolve a definição de rotas eficientes para atendimento de múltiplos pontos. O sistema desenvolvido aborda esse problema aplicando o algoritmo de Dijkstra para calcular o menor caminho entre os pontos da rota, sem considerar, nesta versão, restrições operacionais como janelas de tempo ou capacidade de veículos.
 
-Assim, o objetivo geral deste estudo é desenvolver um sistema capaz de calcular rotas eficientes em ambientes urbanos por meio da aplicação de algoritmos de caminho mínimo sobre dados reais de redes viárias. Como objetivos específicos, destacam-se a modelagem de um banco de dados para armazenamento das informações do sistema, a obtenção e estruturação de dados cartográficos, a implementação do algoritmo de Dijkstra para cálculo de rotas e a construção de uma interface que permita ao usuário selecionar uma distribuidora como ponto de partida, definir múltiplos pontos de entrega no mapa e visualizar a rota otimizada calculada.
+Assim, o objetivo geral deste estudo é desenvolver um sistema capaz de calcular rotas eficientes em ambientes urbanos por meio da aplicação de algoritmos de caminho mínimo sobre dados reais de redes viárias. Como objetivos específicos, destacam-se a modelagem de um banco de dados para armazenamento das informações do sistema, a obtenção e estruturação de dados cartográficos, a implementação do algoritmo de Dijkstra para cálculo de rotas e a construção de uma interface que permita ao usuário definir um ponto de origem, adicionar múltiplos pontos de entrega com seus respectivos destinatários e visualizar a rota otimizada calculada sobre o mapa real da cidade.
 
 As principais contribuições deste projeto concentram-se na integração de diferentes áreas da computação, como bancos de dados, engenharia de software e teoria dos grafos, para a construção de um sistema funcional de roteirização urbana. Além de demonstrar a aplicação prática de algoritmos clássicos em problemas reais, o sistema também contribui para o entendimento de como dados geográficos e técnicas computacionais podem ser utilizados no desenvolvimento de soluções voltadas à otimização de processos logísticos.
 
@@ -194,15 +194,48 @@ Dessa forma, a aplicação de técnicas de roteirização em sistemas computacio
 
 A presente pesquisa possui caráter aplicado, uma vez que busca desenvolver uma solução computacional para o cálculo de rotas eficientes em um contexto de entregas urbanas. Quanto à abordagem, o trabalho é classificado como quantitativo, pois utiliza algoritmos e estruturas matemáticas para determinar o menor caminho entre os pontos de uma rede viária real. Em relação aos objetivos, trata-se de uma pesquisa de natureza exploratória e descritiva, voltada à aplicação de técnicas de otimização no desenvolvimento de um sistema de apoio ao planejamento de rotas.
 
-O desenvolvimento do sistema baseou-se na modelagem da rede viária urbana como um grafo ponderado, no qual cada interseção é representada por um vértice e cada via por uma aresta com peso correspondente à sua extensão. O entregador seleciona uma distribuidora cadastrada como ponto de partida e define os pontos de entrega diretamente no mapa. A partir dessa sequência, o algoritmo de Dijkstra é aplicado entre todos os pares de pontos relevantes, determinando a melhor ordem de visita de forma a minimizar a distância total percorrida. A rota completa é então apresentada ao entregador como o trajeto mais eficiente para o atendimento de todos os pontos selecionados.
+O desenvolvimento do sistema baseou-se na modelagem da rede viária urbana como um grafo ponderado, no qual cada interseção é representada por um vértice e cada via por uma aresta com peso correspondente à sua extensão. O entregador informa o endereço ou as coordenadas geográficas do ponto de origem e define os pontos de entrega, informando o endereço e os dados do destinatário de cada ponto. A partir dessa sequência, o algoritmo de Dijkstra é aplicado entre todos os pares de pontos relevantes, determinando a melhor ordem de visita de forma a minimizar a distância total percorrida. A rota completa é então apresentada ao entregador como o trajeto mais eficiente para o atendimento de todos os pontos selecionados.
 
-Do ponto de vista tecnológico, o sistema será desenvolvido utilizando Python com o microframework Flask para a construção do servidor web, HTML, CSS e JavaScript para a interface com o usuário, e MySQL para o armazenamento das informações. Os dados cartográficos serão obtidos a partir do OpenStreetMap e manipulados com o auxílio da biblioteca OSMnx, que representa a malha viária como um grafo ponderado. O cálculo das rotas será realizado por meio do algoritmo de Dijkstra, disponibilizado pela biblioteca NetworkX.
+Do ponto de vista tecnológico, o sistema será desenvolvido utilizando Python com o microframework Flask para a construção do servidor web, HTML, CSS e JavaScript para a interface com o usuário, e MySQL para o armazenamento das informações. Os dados cartográficos serão obtidos a partir do OpenStreetMap e manipulados com o auxílio da biblioteca OSMnx, que representa a malha viária como um grafo ponderado.O cálculo das rotas é realizado por meio de uma implementação própria do algoritmo de Dijkstra, desenvolvida sem o uso de bibliotecas externas de grafos. Para a identificação do nó mais próximo no grafo em relação às coordenadas fornecidas pelo usuário, foi utilizada a distância euclidiana como métrica de aproximação, também implementada de forma manual.
 
 Embora a fundamentação teórica apresente conceitos relacionados ao *Vehicle Routing Problem* (VRP) e suas variações — como restrições de janelas de tempo, capacidade de veículos e múltiplos depósitos —, tais aspectos não serão implementados nesta versão do sistema. O escopo atual está delimitado ao cálculo da rota mais eficiente entre uma distribuidora e os pontos de entrega selecionados pelo usuário, sem considerar restrições operacionais adicionais. No entanto, essas funcionalidades poderão ser incorporadas em versões futuras do sistema, ampliando sua aplicabilidade em cenários logísticos mais complexos.
 
-O processo de desenvolvimento foi organizado em três etapas: planejamento, implementação e validação. Na etapa de planejamento, foram definidos o escopo do sistema, as tecnologias utilizadas e a modelagem do banco de dados. Na etapa de implementação, foram desenvolvidos o servidor web, a interface com o usuário, a integração com os dados do OpenStreetMap e o módulo de cálculo de rotas. Por fim, na etapa de validação, foram realizados testes com diferentes combinações de distribuidoras e pontos de entrega, a fim de verificar o funcionamento do sistema e a consistência das rotas calculadas.
+O processo de desenvolvimento foi organizado em três etapas: planejamento, implementação e validação. Na etapa de planejamento, foram definidos o escopo do sistema, as tecnologias utilizadas e a modelagem do banco de dados. Na etapa de implementação, foram desenvolvidos o servidor web, a interface com o usuário, a integração com os dados do OpenStreetMap e o módulo de cálculo de rotas. Por fim, na etapa de validação, foram realizados testes com diferentes combinações de pontos de origem e destino, a fim de verificar o funcionamento do sistema e a consistência das rotas calculadas.
 
 ---
+
+## 5. Análise dos Resultados
+
+O sistema desenvolvido foi testado com diferentes combinações de pontos de origem e destino na cidade de Erechim, RS, utilizando dados reais da malha viária obtidos a partir do OpenStreetMap. Os testes realizados permitiram verificar o funcionamento do sistema em diferentes cenários, avaliando a consistência das rotas calculadas e o desempenho geral da aplicação.
+
+A implementação do algoritmo de Dijkstra com fila de prioridade demonstrou eficiência satisfatória para o contexto urbano avaliado. O grafo da cidade de Erechim, composto por milhares de nós e arestas representando interseções e vias, foi carregado na inicialização do servidor e mantido em memória durante toda a execução, eliminando a necessidade de recarregamento a cada requisição e contribuindo para a redução do tempo de resposta do sistema.
+
+Os testes com múltiplos pontos de entrega confirmaram o funcionamento correto do cálculo sequencial de rotas, no qual o algoritmo de Dijkstra é aplicado entre cada par de pontos consecutivos e os segmentos resultantes são concatenados para formar o trajeto completo. As rotas calculadas respeitaram a malha viária real da cidade, seguindo ruas e avenidas existentes sem traçar caminhos em linha reta entre os pontos.
+
+A interface web desenvolvida permitiu a visualização das rotas calculadas sobre o mapa real da cidade, utilizando dados do OpenStreetMap renderizados pela biblioteca Leaflet.js. O sistema também possibilitou o registro de entregas com múltiplos pontos e destinatários distintos e a consulta ao histórico de rotas anteriores.
+
+Do ponto de vista da usabilidade, o sistema oferece duas formas de entrada de dados para os pontos da rota, por endereço textual, com geocodificação automática via Nominatim, ou por coordenadas geográficas inseridas manualmente, o que amplia sua aplicabilidade em situações onde o endereço não é reconhecido pela plataforma de geocodificação.
+
+Os resultados obtidos demonstram a viabilidade da utilização de algoritmos clássicos de teoria dos grafos em conjunto com dados geográficos reais para o desenvolvimento de sistemas de roteirização urbana, confirmando os objetivos propostos no início do trabalho.
+
+---
+
+## 6. Considerações Finais
+
+A presente pesquisa apresentou o desenvolvimento de um sistema web de roteirização voltado ao cálculo da rota mais eficiente entre um ponto de origem e múltiplos pontos de entrega em ambiente urbano. A solução proposta integrou conceitos de teoria dos grafos, banco de dados e engenharia de software, demonstrando a viabilidade da aplicação de algoritmos clássicos em conjunto com dados geográficos reais para a construção de sistemas de logística urbana.
+
+O algoritmo de Dijkstra, implementado de forma manual com o uso de fila de prioridade, mostrou-se adequado para o contexto avaliado, calculando rotas eficientes sobre a malha viária real da cidade de Erechim a partir de dados obtidos do OpenStreetMap. A aplicação do algoritmo de forma sequencial entre pares de pontos consecutivos permitiu o suporte a múltiplos destinos em uma única rota, atendendo ao requisito central do sistema.
+
+O sistema desenvolvido atingiu os objetivos propostos, oferecendo uma interface funcional para o planejamento e registro de entregas urbanas, com visualização das rotas calculadas sobre o mapa real da cidade. A integração entre frontend, backend e banco de dados possibilitou o funcionamento completo do fluxo de uma entrega, desde o cadastro até a consulta ao histórico de rotas anteriores.
+
+O código-fonte completo do sistema, incluindo a documentação da API e o esquema do banco de dados, está disponível no repositório do projeto em: https://www.forge.uricer.edu.br/2026-1-ProjetoIntegrador3/GrupoE. O commit correspondente à entrega final pode ser acessado em: [link do commit final].
+
+Como trabalhos futuros, destacam-se as seguintes possibilidades de evolução do sistema:
+
+- **Restrições de janelas de tempo** — incorporação de restrições temporais para o atendimento dos pontos de entrega dentro de intervalos definidos;
+- **Capacidade de veículos** — limitação da quantidade de itens ou peso que cada veículo pode transportar por rota;
+- **Múltiplos depósitos** — suporte a cenários com mais de um ponto de origem, permitindo a distribuição de entregas entre diferentes bases operacionais;
+- **Otimização da ordem dos pontos** — implementação de heurísticas baseadas no problema do caixeiro viajante para determinar a sequência ótima de visita aos pontos de entrega.
 
 ## Referências
  
@@ -225,8 +258,6 @@ MOZILLA DEVELOPER NETWORK. JavaScript Guide. 2024. Disponível em: https://devel
 MYSQL DOCUMENTATION. Oracle Corporation, 2024. Disponível em: https://dev.mysql.com/doc/. Acesso em: 29 mar. 2026.
  
 OPENSTREETMAP CONTRIBUTORS. OpenStreetMap. 2024. Disponível em: https://www.openstreetmap.org. Acesso em: 29 mar. 2026.
- 
-POSTGRESQL DOCUMENTATION. PostgreSQL Global Development Group, 2024. Disponível em: https://www.postgresql.org/docs/. Acesso em: 29 mar. 2026.
  
 PYTHON DOCUMENTATION. Python Software Foundation, 2024. Disponível em: https://docs.python.org/3/. Acesso em: 29 mar. 2026.
  
