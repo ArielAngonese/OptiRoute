@@ -90,6 +90,7 @@ O **Algoritmo de Dijkstra** é executado sobre esse grafo para encontrar o camin
 
 - [Documentação da API](docs/api.md)
 - [Artigo Científico](docs/article.md)
+- [Artigo em PDF] (docs/article.pdf)
 - [SQL do Projeto](docs/schema.sql)
 
 ---
